@@ -3,6 +3,7 @@ import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Float32, Int8
 from geometry_msgs.msg import Twist
+from sensor_msgs.msg import Imu
 
 from control_pkg.commands import Runner, Command
 from control_pkg.drive_commands import DriveDistanceCommand, DriveToWaypointCommand
@@ -14,17 +15,20 @@ class Auto(Node):
         super().__init__('auto')
         
         # Set up ROS stuff
-        self.pivot_position = None
-        self.position = None
+        self.pivot_position: Int8 = None
+        self.position: Twist = None
+        self.orientation: Imu = None
         
-        self.pivot_position_updated = False
-        self.position_updated = False
+        self.pivot_position_updated: bool = False
+        self.position_updated: bool = False
+        self.orientation_updated: bool = False
         
         self.pivot_publisher = self.create_publisher(Int8, '/vehicle/pivot', 10)
         self.speed_publisher = self.create_publisher(Twist, '/cmd_vel', 10)
         
         self.create_subscription(Twist, '/apriltag', self.update_position, 10)
         self.create_subscription(Float32, '/sensor/pivot', self.update_pivot_position, 10)
+        self.create_subscription(Imu, "/imu", self.update_orientation, 10)
         
         # Start runner
         self.runner = Runner()
@@ -60,7 +64,7 @@ class Auto(Node):
         wait_until = lambda condition : WaitUntilCommand(condition)
 
         # Creating and returning command
-        return wait_until(lambda : self.position_updated and self.pivot_position_updated)\
+        return wait_until(lambda : self.position_updated and self.pivot_position_updated and self.orientation_updated)\
                 .and_then(turn_to_degrees(0))\
                 .and_then(wait(2))\
                 .and_then(drive_to_waypoint(left_waypoint))\
@@ -170,6 +174,16 @@ class Auto(Node):
         msg = Twist()
         msg.linear.x = speed
         self.speed_publisher.publish(msg)
+
+    def update_orientation(self, msg: Imu) -> None:
+        """
+        Updates the orientation when a new message is heard
+
+        Args:
+            msg (Imu): Message containing the new imu position
+        """
+        self.orientation_updated = True
+        self.orientation = msg.data
         
 def main():
     rclpy.init()

@@ -28,13 +28,12 @@ def generate_launch_description():
         name='imu'
     )
 
-
-
     #Declare launch description and populate
     ld = LaunchDescription()
 
     #declare launch actions
     ld.add_action(start_axle_manager_node)
     ld.add_action(start_auto_node)
+    ld.add_action(start_imu_node)
 
     return ld
