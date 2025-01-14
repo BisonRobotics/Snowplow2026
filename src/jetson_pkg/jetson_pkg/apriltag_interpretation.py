@@ -1,6 +1,6 @@
 import math
 
-def apriltag_interpretation(xa,ya,thetaa,xc,zc,thetac):
+def apriltag_interpretation(xa, ya, thetaa, xc, zc, thetac):
     thetar=math.radians(thetaa) + math.pi + math.radians(thetac) + math.atan(xc/zc)
    
     dist = math.sqrt(xc**2 + zc**2)

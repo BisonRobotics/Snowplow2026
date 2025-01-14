@@ -26,6 +26,8 @@ class ApriltagPublisher(Node):
         self.latest_frame = None
         threading.Thread(target=self.keep_up_thread).start()
         self.timer = self.create_timer(timer_period, self.timer_callback)
+
+        # file that has the apriltags that are going to be read
         with open('apriltag_poses.json') as json_file:
             self.apriltag_poses = json.load(json_file)
 
@@ -38,13 +40,18 @@ class ApriltagPublisher(Node):
     def timer_callback(self):
         gray = cv2.cvtColor(self.latest_frame, cv2.COLOR_RGB2GRAY)
         detections = detector.detect(gray)
+
+        # check that there are detections
         if len(detections) > 0:
+            # message
             msg = Twist()
             msg.linear.x = 0
             msg.linear.z = 0
             msg.angular.y = 0
             
+            # find the pose of each detectoin
             for detection in detections:
+                # get apriltag pose
                 pose, _, _ = detector.detection_pose(detection, [fx, fy, cx, cy], 0.3254375)
                 
                 relative_x = pose[0][3] + pivot_x_offset
@@ -53,16 +60,20 @@ class ApriltagPublisher(Node):
                 
                 apriltag_pose = self.apriltag_poses[detection.family][detection.id]
                 
+                # find absolute robot position based on tag
                 xr, zr, thetar = apriltag_interpretation(apriltag_pose['x'], apriltag_pose['z'], apriltag_pose['angle'], relative_x, relative_y, relative_rotation)
                 
+                # add it to the message
                 msg.linear.x += xr
                 msg.linear.z += zr
                 msg.angular.y += thetar
-                
+
+            # average it out to get robot position 
             msg.linear.x /= len(detections)
             msg.linear.z /= len(detections)
             msg.angular.y /= len(detections)
             
+            # publish
             self.publisher_.publish(msg)
         
 def main(args=None):
