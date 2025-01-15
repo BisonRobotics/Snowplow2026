@@ -6,12 +6,17 @@ from custom_msgs.srv import WaypointServ
 import rclpy
 from rclpy.node import Node
 
+import json
+
 class WaypointService(Node):
 
     def __init__(self):
         super().__init__('waypoint_service')
 
-        self.waypoints: list[Waypoint] = [Waypoint(10, 10)]
+        with open('src/waypoint/waypoint/waypoints.json') as json_file:
+            data = json.load(json_file)
+
+        self.waypoints: list[Waypoint] = [Waypoint(point["x"], point["y"]) for point in data]
 
         self.srv = self.create_service(WaypointServ, 'waypoint', self.waypoint_callback)
 
