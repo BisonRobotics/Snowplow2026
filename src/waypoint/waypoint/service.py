@@ -1,6 +1,6 @@
 from waypoint.waypoint import Waypoint
 
-from geometry_msgs.msg import Point
+from geometry_msgs.msg import Point, Polygon
 from custom_msgs.srv import WaypointServ
 
 import rclpy
@@ -16,11 +16,36 @@ class WaypointService(Node):
         with open('src/waypoint/waypoint/waypoints.json') as json_file:
             data = json.load(json_file)
 
+        self.obstacle_sub = self.create_subscription(
+            Polygon,
+            '/obstacle_locations',
+            self.obstacle_callback,
+            10
+        )
+        self.got_obstacles: bool = False
+
         self.waypoints: list[Waypoint] = [Waypoint(point["x"], point["y"]) for point in data]
 
-        self.srv = self.create_service(WaypointServ, 'waypoint', self.waypoint_callback)
+        self.srv = self.create_service(WaypointServ, '/waypoint', self.waypoint_callback)
+
+    def obstacle_callback(self, msg: Polygon):
+        """Moves the waypoints if an obstacle is within the range"""
+        for point in msg.points:
+            for waypoint in self.waypoints:
+                if waypoint.within_range(point.x, point.y, 0.75):
+                    # naively moves it away 1 meter from the garage, might be a problem
+                    waypoint.y += 1
+                    break
+
+        # makes it so it runs once
+        self.destroy_subscription(self.obstacle_sub)
+        self.got_obstacles = True
 
     def waypoint_callback(self, request, response: Point):
+        if not self.got_obstacles:
+            self.get_logger().info('/obstacle_locations subscription stream is empty')
+            return
+
         self.get_logger().info('Incoming request\na: %d b: %d' % (request.position.center.x, request.position.center.y))
 
         point = request.position.center
