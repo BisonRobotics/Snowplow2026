@@ -3,6 +3,7 @@ from rclpy.node import Node
 
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Polygon, Point32
+from custom_msgs.msg import Location
 
 import numpy as np
 
@@ -13,7 +14,8 @@ from .obstacle_real_location import location
 class LaserScanerNode(Node):
 
     def __init__(self):
-        self.scan_data = None
+        self.scan_data: LaserScan|None = None
+        self.location_data: Location|None = None
 
         super().__init__('laser_scanner_node')
 
@@ -23,10 +25,17 @@ class LaserScanerNode(Node):
             10
         )
 
-        self.sub = self.create_subscription(
+        self.location_sub = self.create_subscription(
+            Location,
+            '/location_calculate',
+            self.location_callback,
+            10
+        )
+
+        self.scan_sub = self.create_subscription(
             LaserScan,
             '/scan',
-            self.listener_callback,
+            self.scan_callback,
             10
         )
 
@@ -36,15 +45,20 @@ class LaserScanerNode(Node):
         # publish converted data
         if self.scan_data:
             self.pub.publish(self.scan_data)
+
+    def location_callback(self, msg: Location):
+        self.location_data = msg
         
-    def listener_callback(self, msg: LaserScan):
+    def scan_callback(self, msg: LaserScan):
         # get init data
-        if not self.scan_data:
+        if not self.scan_data and self.location_data:
             msg = polar_manipulation(msg)
             msg = find_minima(msg)
             
             #add in pathplanning for obs x and y
-            locations = [location(0, -2 , 90, range, azimuth) for range, azimuth in msg] 
+            locations = [
+                location(self.location_data.x, self.location_data.y, self.location_data.orientation, range, azimuth) for range, azimuth in msg
+            ] 
             locations = filter_polar(locations)
             
             output = Polygon()
@@ -58,6 +72,7 @@ class LaserScanerNode(Node):
                 output.points.append(point)
 
             self.scan_data = output
+            
 def polar_manipulation(scan_msg: LaserScan):
     angle_min = scan_msg.angle_min
     angle_max = scan_msg.angle_max
