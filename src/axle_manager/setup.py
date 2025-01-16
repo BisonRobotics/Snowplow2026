@@ -22,7 +22,9 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-             'axle_manager = axle_manager.hdc2460_node:main'
+            'axle_manager = axle_manager.hdc2460_node:main',
+            'odom = axle_manager.wheel_odom_node:main',
+            'location_calculate = axle_manager.location_calculate_node:main'
         ],
     },
 )
