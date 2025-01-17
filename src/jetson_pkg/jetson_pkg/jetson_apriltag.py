@@ -28,8 +28,29 @@ class ApriltagPublisher(Node):
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
         # file that has the apriltags that are going to be read
-        with open('apriltag_poses.json') as json_file:
-            self.apriltag_poses = json.load(json_file)
+        # with open('apriltag_poses.json') as json_file:
+        #     self.apriltag_poses = json.load(json_file)
+
+        self.apriltag_poses = json.loads("""{
+            "14": {
+                "x": 0,
+                "y": 3.71,
+                "z": 0,
+                "angle": 270
+            },
+            "12": {
+                "x": -7.71,
+                "y": 2,
+                "z": 0,
+                "angle": 0
+            },
+            "17": {
+                "x": 7.71,
+                "y": 2,
+                "z": 0,
+                "angle": 180
+            }
+        }""")
 
     def keep_up_thread(self):
         while True:
@@ -45,9 +66,9 @@ class ApriltagPublisher(Node):
         if len(detections) > 0:
             # message
             msg = Twist()
-            msg.linear.x = 0
-            msg.linear.z = 0
-            msg.angular.y = 0
+            msg.linear.x = 0.0
+            msg.linear.z = 0.0
+            msg.angular.y = 0.0
             
             # find the pose of each detectoin
             for detection in detections:
@@ -58,7 +79,7 @@ class ApriltagPublisher(Node):
                 relative_y = pose[2][3] + pivot_z_offset
                 relative_rotation = np.arcsin(-pose[2][0]) * (180 / math.pi)
                 
-                apriltag_pose = self.apriltag_poses[detection.family][detection.id]
+                apriltag_pose = self.apriltag_poses[str(detection.tag_id)]
                 
                 # find absolute robot position based on tag
                 xr, zr, thetar = apriltag_interpretation(apriltag_pose['x'], apriltag_pose['z'], apriltag_pose['angle'], relative_x, relative_y, relative_rotation)
