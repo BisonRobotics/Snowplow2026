@@ -51,7 +51,8 @@ class LaserScanerNode(Node):
         
     def scan_callback(self, msg: LaserScan):
         # get init data
-        if not self.scan_data and self.location_data:
+        # if not self.scan_data and self.location_data:
+        if not self.scan_data:
             msg = polar_manipulation(msg)
             msg = find_minima(msg)
             
