@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'sensors_pkg'
+package_name = 'waypoint'
 
 setup(
     name=package_name,
@@ -13,14 +13,14 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='brandon',
-    maintainer_email='brandon@todo.todo',
+    maintainer='karsten',
+    maintainer_email='karsten.larson.1@gmail.com',
     description='TODO: Package description',
-    license='TODO: License declaration',
+    license='Apache-2.0',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            "obs = sensors_pkg.laser_scan_node:main"
+            'waypoint = waypoint.service:main'
         ],
     },
 )
