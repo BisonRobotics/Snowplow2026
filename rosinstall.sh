@@ -18,4 +18,5 @@ source /opt/ros/iron/setup.bash
 echo "source /opt/ros/iron/setup.bash" >> ~/.bashrc
 echo "export ROS_DOMAIN_ID=42" >> ~/.bashrc
 sudo apt install python3-colcon-common-extensions python3-pip ros-iron-joy-linux
+sudo apt install python3-apriltag
 pip install setuptools==58.2.0 serial
