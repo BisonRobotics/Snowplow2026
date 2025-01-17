@@ -41,25 +41,22 @@ class WaypointService(Node):
         self.destroy_subscription(self.obstacle_sub)
         self.got_obstacles = True
 
-    def waypoint_callback(self, request, response: Point):
-        if not self.got_obstacles:
-            self.get_logger().info('/obstacle_locations subscription stream is empty')
-            return
+    def waypoint_callback(self, request, response):
+        # if not self.got_obstacles:
+        #     self.get_logger().info('/obstacle_locations subscription stream is empty')
+        #     return
 
-        self.get_logger().info('Incoming request\na: %d b: %d' % (request.position.center.x, request.position.center.y))
-
-        point = request.position.center
+        point = request.point
 
         # Check if the waypoints are within range
-        if self.waypoints[0].within_range(point.x, point.y):
+        if self.waypoints[0].within_range(float(point.x), float(point.y)):
 
             # Get rid of visited waypoint
             self.waypoints.pop(0)
 
         # Create the response
-        response.x = self.waypoints[0].x
-        response.y = self.waypoints[0].y
-        response.z = 0
+        response.point.x = float(self.waypoints[0].x)
+        response.point.y = float(self.waypoints[0].y)
 
         return response
 

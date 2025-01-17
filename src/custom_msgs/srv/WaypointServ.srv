@@ -1,3 +1,3 @@
-custom_msgs/Position position
+geometry_msgs/Point point
 ---
 geometry_msgs/Point point

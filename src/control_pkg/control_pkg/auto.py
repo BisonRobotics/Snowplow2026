@@ -44,9 +44,11 @@ class Auto(Node):
         self.comparator(0,20,0,0,0) # reseting comparator, last three 0's should be robots actual position values
         for set in instructions:
             self.runner.start_command(self.instructions_to_commands(set[0],set[1],set[2]))
+            
             # check subscription to get current posistion 
             # plug current position into the comparator
             self.comparator(self.instructions_to_displacement())
+            # kill self 
         return()
     
 
