@@ -53,8 +53,8 @@ class WaypointService(Node):
         # Check if the waypoints are within range
         if self.waypoints[0].within_range(point.x, point.y):
 
-            # Circular for now
-            self.waypoints.append(self.waypoints.pop(0))
+            # Get rid of visited waypoint
+            self.waypoints.pop(0)
 
         # Create the response
         response.x = self.waypoints[0].x
