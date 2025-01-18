@@ -48,7 +48,7 @@ class Auto(Node):
         Instance variables for advanced path planning
         """
         self.obstacles = ((2.5,2),(-4,3.5),(0,3.8)) # Placeholder until we get lidar data
-        self.robot_X = 0.0 # Placeholder until we get actual live data.
+        self.robot_X = 0.0 
         self.robot_y = 0.0
         self.orientation = 0.0
         self.attempts = 0.0
@@ -304,9 +304,10 @@ class Auto(Node):
             self.target_angle += angle_change/2
             if((self.target_angle >= orientation + 15) or (self.target_angle <= orientation - 15) or (self.target_x_position >= robot_x + .25) or (self.target_x_position <= robot_x - .25) or (self.target_y_position >= robot_y + .25) or (self.target_y_position <= robot_y - .25)):
                 self.corrections(self.target_angle,self.target_x_position,self.target_y_position) # Call Correction method to fix miss alinement.
-            return
+            
         
-    def corrections(self,target_angle,target_x,target_y):
+    def corrections(self,target_angle_corrections,target_x_corrections,target_y_corrections):
+        self.primary_method(target_x_corrections,target_y_corrections)
         # This method was intended to find a new path that would correct distance from where we are to where we want to be.
         pass
     
