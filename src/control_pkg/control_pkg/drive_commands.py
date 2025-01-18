@@ -125,4 +125,4 @@ class DriveBackwardToWaypointCommand(DriveToWaypointCommand):
 
         start_turn, direction_movement_start, distance1, _, _, distance2, end_turn, direction_movement_end, distance3 = turn_path(start_point=(my_position.linear.x, my_position.linear.z), start_direction=((my_position.angular.y + 180) % 360), end_point=(self.waypoint.linear.x, self.waypoint.linear.z), end_direction=((self.waypoint.angular.y + 180) % 360))
     
-        return (start_turn, -direction_movement_start, distance1, 0, -1, distance2, end_turn, -direction_movement_end, distance3)
+        return (-start_turn, -direction_movement_start, distance1, 0, -1, distance2, -end_turn, -direction_movement_end, distance3)
