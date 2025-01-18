@@ -69,9 +69,12 @@ class DriveToWaypointCommand(SequentialCommandGroup):
         self.drive_pivot = drive_pivot
         self.drive = drive
         
-    def initialize(self):
+    def __get_path(self):
         my_position = self.get_position()
-        path = turn_path(start_point=(my_position.linear.x, my_position.linear.z), start_direction=my_position.angular.y, end_point=(self.waypoint.linear.x, self.waypoint.linear.z), end_direction=self.waypoint.angular.y)
+        return turn_path(start_point=(my_position.linear.x, my_position.linear.z), start_direction=my_position.angular.y, end_point=(self.waypoint.linear.x, self.waypoint.linear.z), end_direction=self.waypoint.angular.y)
+    
+    def initialize(self):
+        path = self.__get_path()
     
         path_segment_1 = SequentialCommandGroup()
         path_segment_1.add_commands(
@@ -109,3 +112,17 @@ class DriveToWaypointCommand(SequentialCommandGroup):
             
         if len(self.commands) > 0:
             self.commands[0].initialize()
+
+class DriveBackwardToWaypointCommand(DriveToWaypointCommand):
+    """
+    Command that drives the vehicle to the given waypoint, backwards
+    """
+    def __init__(self, waypoint: Twist, get_position: Callable[[], Twist], get_pivot_position: Callable[[], float], drive_pivot: Callable[[int], None], drive: Callable[[float], None]):
+        super().__init__(waypoint, get_position, get_pivot_position, drive_pivot, drive)
+
+    def __get_path(self):
+        my_position = self.get_position()
+
+        start_turn, direction_movement_start, distance1, _, _, distance2, end_turn, direction_movement_end, distance3 = turn_path(start_point=(my_position.linear.x, my_position.linear.z), start_direction=((my_position.angular.y + 180) % 360), end_point=(self.waypoint.linear.x, self.waypoint.linear.z), end_direction=((self.waypoint.angular.y + 180) % 360))
+    
+        return (start_turn, -direction_movement_start, distance1, 0, -1, distance2, end_turn, -direction_movement_end, distance3)

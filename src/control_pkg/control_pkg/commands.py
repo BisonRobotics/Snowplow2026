@@ -1,3 +1,5 @@
+from typing import Callable
+
 class Command:
     """
     The basic building block of the command-based framework
@@ -133,6 +135,28 @@ class ParallelCommandGroup(Command):
     def end(self) -> None:
         for command in self.commands:
             command.end()
+    
+class ConditionalCommand(Command):
+    def __init__(self, command: Command, conditonal: Callable[[any], bool], *args: tuple[any]):
+        self.command: Command = command
+        self.condition: bool = conditonal(*args)
+
+    def initialize(self) -> None:
+        if self.condition:
+            self.command.initialize()
+    
+    def execute(self) -> None:
+        if self.condition:
+            self.command.execute()
+    
+    def is_finished(self) -> bool:
+        return self.condition and self.command.is_finished()
+    
+    def end(self) -> None:
+        self.condition = False
+
+        if self.command.is_finished():
+            self.command.end()
     
 class Runner:
     """
