@@ -19,7 +19,7 @@ class IMU (Node):
         imu_msg = Imu()
         wxyz = self.s.read_attitude_quaternion()
         print(wxyz)
-        imu_msg.orientation.x = wxyz.x
+        imu_msg.orientation.x = -1 * wxyz.x
         imu_msg.orientation.y = wxyz.y
         imu_msg.orientation.w = wxyz.w
         imu_msg.orientation.z = wxyz.z
