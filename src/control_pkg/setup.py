@@ -23,7 +23,8 @@ setup(
     entry_points={
         'console_scripts': [
             'auto = control_pkg.auto:main',
-            'fqr = control_pkg.fqr:main'
+            'fqr = control_pkg.fqr:main',
+            'location_calculate = control_pkg.location_calculate_node:main'
         ],
     },
 )
