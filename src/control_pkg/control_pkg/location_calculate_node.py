@@ -90,11 +90,11 @@ class Location_Calculate(Node):
     #uses left wheel speed and right wheel speed over a time frame
     #returns the change in orientation avg distance between 
     #left and right wheels and direct
-    def update_odometry(left:float, right:float, time_frame=1/600):
-        wc = 0.43 * math.pi
+    def update_odometry(left:float, right:float, time_frame:float=1.0/600.0):
+        wc:float = 0.43 * math.pi
 
         #wheel track in meters
-        wt = .915
+        wt:float = 0.915
     
         #determine distance traveled on avearage direct and change in orientation
         #and return them
@@ -115,7 +115,7 @@ class Location_Calculate(Node):
 
     #main callback to determine and publish robots location
     def callback(self):
-        self.time = self.get_clock().now()
+        self.time += .1
 
         msg = Vector3()
 
