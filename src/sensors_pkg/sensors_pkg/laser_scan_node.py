@@ -44,7 +44,7 @@ class LaserScanerNode(Node):
             msg = find_minima(msg)
             
             #add in pathplanning for obs x and y
-            locations = [location(0, -2 , 90, range, azimuth) for range, azimuth in msg] 
+            locations = [location(0, -0.5 , 90, range, azimuth) for range, azimuth in msg] 
             locations = filter_polar(locations)
             
             output = Polygon()
