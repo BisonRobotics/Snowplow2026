@@ -7,8 +7,7 @@ data_files.append(('share/' + package_name + '/worlds', ['worlds/hyflex_world.wb
 data_files.append(('share/' + package_name + '/resource', ['resource/hyflex.urdf']))
 data_files.append(('share/' + package_name + '/resource/meshes/hyflex', ['resource/meshes/hyflex/back_collision.stl']))
 data_files.append(('share/' + package_name + '/resource/meshes/hyflex', ['resource/meshes/hyflex/base_link_collision.stl']))
-data_files.append(('share/' + package_name + '/resource/meshes/hyflex', ['resource/meshes/hyflex/wheel_fl_collision.stl']))
-data_files.append(('share/' + package_name + '/resource/meshes/hyflex', ['resource/meshes/hyflex/wheel_fr_collision.stl']))
+data_files.append(('share/' + package_name + '/resource/meshes/hyflex', ['resource/meshes/hyflex/wheel_collision.stl']))
 data_files.append(('share/' + package_name, ['package.xml']))
 
 setup(
