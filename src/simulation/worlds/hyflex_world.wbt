@@ -5,8 +5,8 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 WorldInfo {
 }
 Viewpoint {
-  orientation -0.16918054227883958 -0.23077233919256543 0.9581868667320739 4.571973801744105
-  position -0.33048743807418834 5.106015343531941 2.224450172141153
+  orientation -0.5923037865238399 -0.5128771015856132 0.6213962529164961 4.179665887167033
+  position -0.8688231627377151 0.2835637905851784 3.3707877141782543
   follow "rectangle arena"
 }
 Background {
@@ -15,169 +15,202 @@ Background {
   ]
 }
 RectangleArena {
-  floorSize 5 5
+  floorSize 15 15
   floorTileSize 1 1
+  wallHeight 0.5
 }
 Robot {
   translation 0 0 0.15
   children [
-    DEF BACK Solid {
-      children [
-        DEF BACK_BODY Shape {
-          appearance PBRAppearance {
-            baseColor 0.100023 0.53666 0.0196841
-          }
-          geometry Mesh {
-            url [
-              "/home/karsten/Coding/Robotics/Snowplow2025/install/simulation/share/simulation/worlds/../resource/meshes/hyflex/back_collision.stl"
-            ]
-          }
-        }
-      ]
-      name "solid(5)"
-      boundingObject USE BACK_BODY
-      physics Physics {
-      }
-    }
     DEF FRONT Solid {
       children [
-        DEF FRONT_BODY Shape {
-          appearance PBRAppearance {
-            baseColor 0.100023 0.53666 0.0196841
+        DEF FRONT_BODY Transform {
+          scale 0.001 0.001 0.001
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.100023 0.53666 0.0196841
+              }
+              geometry Mesh {
+                url [
+                  "../resource/meshes/hyflex/base_link.dae"
+                ]
+              }
+            }
+          ]
+        }
+        HingeJoint {
+          jointParameters HingeJointParameters {
+            axis 0 0 1
+            anchor -0.654 0 0
+            minStop -0.5
+            maxStop 0.5
           }
-          geometry Mesh {
-            url [
-              "/home/karsten/Coding/Robotics/Snowplow2025/install/simulation/share/simulation/worlds/../resource/meshes/hyflex/base_link_collision.stl"
+          device [
+            RotationalMotor {
+              name "pivot_motor"
+              maxTorque 1000
+            }
+          ]
+          endPoint DEF BACK Solid {
+            children [
+              DEF BACK_BODY Transform {
+                scale 0.001 0.001 0.001
+                children [
+                  Shape {
+                    appearance PBRAppearance {
+                      baseColor 0.100023 0.53666 0.0196841
+                    }
+                    geometry Mesh {
+                      url [
+                        "../resource/meshes/hyflex/back.dae"
+                      ]
+                    }
+                  }
+                ]
+              }
+              DEF BACK_LEFT HingeJoint {
+                jointParameters HingeJointParameters {
+                  axis 0 1 0
+                  anchor -0.978237 0.380379 0.0785005
+                }
+                device [
+                  RotationalMotor {
+                    name "back_left_motor"
+                  }
+                ]
+                endPoint Solid {
+                  translation -0.978237 0.380379 0.0785005
+                  rotation 0 1 0 0
+                  children [
+                    DEF WHEEL Shape {
+                      appearance PBRAppearance {
+                        baseColor 1 0 0
+                      }
+                      geometry Mesh {
+                        url [
+                          "../resource/meshes/hyflex/wheel_collision.stl"
+                        ]
+                      }
+                    }
+                  ]
+                  name "solid(3)"
+                  boundingObject USE WHEEL
+                  physics DEF physics_wh Physics {
+                  }
+                }
+              }
+              DEF BACK_RIGHT HingeJoint {
+                jointParameters HingeJointParameters {
+                  axis 0 1 0
+                  anchor -0.978237 -0.380379 0.0785005
+                }
+                device [
+                  RotationalMotor {
+                    name "back_right_motor"
+                  }
+                ]
+                endPoint Solid {
+                  translation -0.978237 -0.380379 0.0785005
+                  rotation 0 1 0 0
+                  children [
+                    DEF WHEEL Shape {
+                      appearance PBRAppearance {
+                        baseColor 1 0 0
+                      }
+                      geometry Mesh {
+                        url [
+                          "../resource/meshes/hyflex/wheel_collision.stl"
+                        ]
+                      }
+                    }
+                  ]
+                  name "solid(4)"
+                  boundingObject USE WHEEL
+                  physics DEF physics_wh Physics {
+                  }
+                }
+              }
             ]
+            name "solid(5)"
+            boundingObject Mesh {
+              url [
+                "../resource/meshes/hyflex/back_collision.stl"
+              ]
+            }
+            physics Physics {
+            }
+          }
+        }
+        DEF FRONT_RIGHT HingeJoint {
+          jointParameters HingeJointParameters {
+            axis 0 1 0
+            anchor -0.275964 -0.380379 0.0785005
+          }
+          device [
+            RotationalMotor {
+              name "front_right_motor"
+            }
+          ]
+          endPoint Solid {
+            translation -0.275964 -0.380379 0.0785005
+            rotation 0 1 0 0
+            children [
+              DEF WHEEL Shape {
+                appearance PBRAppearance {
+                  baseColor 1 0 0
+                }
+                geometry Mesh {
+                  url [
+                    "../resource/meshes/hyflex/wheel_collision.stl"
+                  ]
+                }
+              }
+            ]
+            name "solid(1)"
+            boundingObject USE WHEEL
+            physics DEF physics_wh Physics {
+            }
+          }
+        }
+        DEF FRONT_LEFT HingeJoint {
+          jointParameters HingeJointParameters {
+            axis 0 1 0
+            anchor -0.2759640000000001 0.380379 0.0785005
+          }
+          device [
+            RotationalMotor {
+              name "front_left_motor"
+            }
+          ]
+          endPoint Solid {
+            translation -0.2759640000000001 0.380379 0.0785005
+            rotation 0 1 0 0
+            children [
+              DEF WHEEL Shape {
+                appearance PBRAppearance {
+                  baseColor 1 0 0
+                }
+                geometry Mesh {
+                  url [
+                    "../resource/meshes/hyflex/wheel_collision.stl"
+                  ]
+                }
+              }
+            ]
+            name "solid(2)"
+            boundingObject USE WHEEL
+            physics DEF physics_wh Physics {
+            }
           }
         }
       ]
-      boundingObject USE FRONT_BODY
+      boundingObject Mesh {
+        url [
+          "../resource/meshes/hyflex/base_link_collision.stl"
+        ]
+      }
       physics Physics {
-      }
-    }
-    DEF BACK_LEFT HingeJoint {
-      jointParameters HingeJointParameters {
-        axis 0 1 0
-        anchor -0.978237 0.380379 0.0785005
-      }
-      device [
-        RotationalMotor {
-          name "back_left_motor"
-        }
-      ]
-      endPoint Solid {
-        translation -0.978237 0.380379 0.0785005
-        rotation 0 1 0 0
-        children [
-          DEF WHEEL Shape {
-            appearance PBRAppearance {
-              baseColor 1 0 0
-            }
-            geometry Mesh {
-              url [
-                "../resource/meshes/hyflex/wheel_collision.stl"
-              ]
-            }
-          }
-        ]
-        name "solid(3)"
-        boundingObject USE WHEEL
-        physics DEF physics_wh Physics {
-        }
-      }
-    }
-    DEF FRONT_LEFT HingeJoint {
-      jointParameters HingeJointParameters {
-        axis 0 1 0
-        anchor -0.2759640000000001 0.380379 0.0785005
-      }
-      device [
-        RotationalMotor {
-          name "front_left_motor"
-        }
-      ]
-      endPoint Solid {
-        translation -0.2759640000000001 0.380379 0.0785005
-        rotation 0 1 0 0
-        children [
-          DEF WHEEL Shape {
-            appearance PBRAppearance {
-              baseColor 1 0 0
-            }
-            geometry Mesh {
-              url [
-                "../resource/meshes/hyflex/wheel_collision.stl"
-              ]
-            }
-          }
-        ]
-        name "solid(2)"
-        boundingObject USE WHEEL
-        physics DEF physics_wh Physics {
-        }
-      }
-    }
-    DEF FRONT_RIGHT HingeJoint {
-      jointParameters HingeJointParameters {
-        axis 0 1 0
-        anchor -0.275964 -0.380379 0.0785005
-      }
-      device [
-        RotationalMotor {
-          name "front_right_motor"
-        }
-      ]
-      endPoint Solid {
-        translation -0.275964 -0.380379 0.0785005
-        rotation 0 1 0 0
-        children [
-          DEF WHEEL Shape {
-            appearance PBRAppearance {
-              baseColor 1 0 0
-            }
-            geometry Mesh {
-              url [
-                "../resource/meshes/hyflex/wheel_collision.stl"
-              ]
-            }
-          }
-        ]
-        name "solid(1)"
-        boundingObject USE WHEEL
-        physics DEF physics_wh Physics {
-        }
-      }
-    }
-    DEF BACK_RIGHT HingeJoint {
-      jointParameters HingeJointParameters {
-        axis 0 1 0
-        anchor -0.978237 -0.380379 0.0785005
-      }
-      device [
-        RotationalMotor {
-          name "back_right_motor"
-        }
-      ]
-      endPoint Solid {
-        translation -0.978237 -0.380379 0.0785005
-        rotation 0 1 0 0
-        children [
-          DEF WHEEL Shape {
-            appearance PBRAppearance {
-              baseColor 1 0 0
-            }
-            geometry Mesh {
-              url [
-                "../resource/meshes/hyflex/wheel_collision.stl"
-              ]
-            }
-          }
-        ]
-        name "solid(4)"
-        boundingObject USE WHEEL
-        physics DEF physics_wh Physics {
-        }
       }
     }
   ]

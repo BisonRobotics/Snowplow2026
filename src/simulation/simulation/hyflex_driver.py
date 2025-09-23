@@ -13,6 +13,7 @@ class HyflexDriver:
         self.__front_right_motor = self.__robot.getDevice('front_right_motor')
         self.__back_left_motor = self.__robot.getDevice('back_left_motor')
         self.__back_right_motor = self.__robot.getDevice('back_right_motor')
+        self.__pivot_motor = self.__robot.getDevice('pivot_motor')
 
         # Set motors to velocity control mode
         self.__front_left_motor.setPosition(float('inf'))
@@ -26,6 +27,9 @@ class HyflexDriver:
 
         self.__back_right_motor.setPosition(float('inf'))
         self.__back_right_motor.setVelocity(0)
+
+        self.__pivot_motor.setPosition(float('inf'))
+        self.__pivot_motor.setVelocity(0)
 
         # Initialize target twist
         self.__target_twist = Twist()
@@ -43,10 +47,9 @@ class HyflexDriver:
         forward_speed = self.__target_twist.linear.x
         angular_speed = self.__target_twist.angular.z
 
-        command_motor_left = (forward_speed - angular_speed * HALF_DISTANCE_BETWEEN_WHEELS) / WHEEL_RADIUS
-        command_motor_right = (forward_speed + angular_speed * HALF_DISTANCE_BETWEEN_WHEELS) / WHEEL_RADIUS
+        self.__front_left_motor.setVelocity(forward_speed)
+        self.__front_right_motor.setVelocity(forward_speed)
+        self.__back_left_motor.setVelocity(forward_speed)
+        self.__back_right_motor.setVelocity(forward_speed)
 
-        self.__front_left_motor.setVelocity(command_motor_left)
-        self.__front_right_motor.setVelocity(command_motor_right)
-        self.__back_left_motor.setVelocity(command_motor_left)
-        self.__back_right_motor.setVelocity(command_motor_right)
+        self.__pivot_motor.setVelocity(angular_speed)
