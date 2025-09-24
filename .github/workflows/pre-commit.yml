@@ -1,0 +1,23 @@
+name: pre-commit
+
+on: pull_request
+
+jobs:
+  black-format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref }}
+      - uses: actions/setup-python@v3
+      - name: Install uv
+        run: pip install uv
+      - name: Run black via uv
+        run: uvx black .
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git add .
+          git diff --cached --quiet || git commit --amend --no-edit
+          git push --force origin HEAD:${{ github.head_ref }}
