@@ -23,6 +23,7 @@ class Auto(Node):
         self.pivot_publisher = self.create_publisher(Int8, '/vehicle/pivot', 10)
         self.speed_publisher = self.create_publisher(Twist, '/cmd_vel', 10)
         
+        self.create_subscription(Twist, '/old_apriltag', self.update_position, 10)
         self.create_subscription(Twist, '/apriltag', self.update_position, 10)
         self.create_subscription(Float32, '/sensor/pivot', self.update_pivot_position, 10)
         
