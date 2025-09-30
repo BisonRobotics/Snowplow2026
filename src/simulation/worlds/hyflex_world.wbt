@@ -24,6 +24,15 @@ Robot {
   children [
     DEF FRONT Solid {
       children [
+        Camera {
+          translation 0.05 0 0.5
+          lens Lens {
+          }
+          focus Focus {
+          }
+          zoom Zoom {
+          }
+        }
         DEF FRONT_BODY Transform {
           scale 0.001 0.001 0.001
           children [
