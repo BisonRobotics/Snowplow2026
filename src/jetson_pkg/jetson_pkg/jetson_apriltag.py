@@ -68,16 +68,17 @@ class ApriltagPublisher(Node):
                 msg.linear.x = xr
                 msg.linear.z = zr
                 msg.angular.y = thetar
-                self.get_logger().info(f'{msg}')
                 self.oldpublisher_.publish(msg)
                 #new without math
                 relative_x = pose[0][3]
                 relative_z = pose[2][3]
+
                 xr, zr, thetar = apriltag_interpretation(0, 3.71, 270, relative_x, relative_z, relative_rotation)
                 msg_no_offset = Twist()
                 msg_no_offset.linear.x = xr
                 msg_no_offset.linear.z = zr
                 msg_no_offset.angular.y = thetar
+                
                 self.get_logger().info(f'{msg_no_offset}')
                 self.publisher_.publish(msg_no_offset)
         except cv2.error as e:
