@@ -71,13 +71,13 @@ class ApriltagPublisher(Node):
                 self.oldpublisher_.publish(msg)
                 #new without math
                 relative_x = pose[0][3]
+                relative_y = pose[1][3]
                 relative_z = pose[2][3]
 
-                xr, zr, thetar = apriltag_interpretation(0, 3.71, 270, relative_x, relative_z, relative_rotation)
                 msg_no_offset = Twist()
-                msg_no_offset.linear.x = xr
-                msg_no_offset.linear.z = zr
-                msg_no_offset.angular.y = thetar
+                msg_no_offset.linear.x = relative_x
+                msg_no_offset.linear.z = relative_z
+                msg_no_offset.linear.y = relative_y
                 
                 self.get_logger().info(f'{msg_no_offset}')
                 self.publisher_.publish(msg_no_offset)
