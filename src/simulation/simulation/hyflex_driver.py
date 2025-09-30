@@ -44,6 +44,9 @@ class HyflexDriver:
         self.__pivot_sensor = self.__robot.getDevice('pivot_sensor')
         self.__pivot_sensor.enable(int(self.__robot.getBasicTimeStep()))
 
+        self.__camera_sensor = self.__robot.getDevice('camera')
+        self.__camera_sensor.enable(int(self.__robot.getBasicTimeStep()))
+
         rclpy.init(args=None)
         self.__node = rclpy.create_node('hyflex_driver')
         self.__node.create_subscription(Twist, '/cmd_vel', self.__cmd_vel_callback, 1)
