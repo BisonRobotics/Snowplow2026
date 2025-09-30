@@ -5,9 +5,10 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 WorldInfo {
 }
 Viewpoint {
-  orientation -0.5923037865238399 -0.5128771015856132 0.6213962529164961 4.179665887167033
-  position -0.8688231627377151 0.2835637905851784 3.3707877141782543
-  follow "rectangle arena"
+  orientation -0.36094201177131624 -0.6776259655056773 0.6407370092409004 4.982917662566233
+  position -5.123982878636374 5.140995502667831 10.008317838079629
+  follow "hyflex"
+  followType "Mounted Shot"
 }
 Background {
   skyColor [
@@ -52,10 +53,13 @@ Robot {
           jointParameters HingeJointParameters {
             axis 0 0 1
             anchor -0.654 0 0
-            minStop -0.5
-            maxStop 0.5
+            minStop -0.32505
+            maxStop 0.32505
           }
           device [
+            PositionSensor {
+              name "pivot_sensor"
+            }
             RotationalMotor {
               name "pivot_motor"
               maxTorque 1000
