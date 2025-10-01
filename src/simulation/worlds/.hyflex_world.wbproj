@@ -7,6 +7,6 @@ centralWidgetVisible: 1
 projectionMode: PERSPECTIVE
 renderingMode: PLAIN
 orthographicViewHeight: 4.90105
-textFiles: 0 "controllers/my_controller/my_controller.py"
+textFiles: -1
 consoles: Console:All:All
 renderingDevicePerspectives: hyflex:camera;1;1;0;0
