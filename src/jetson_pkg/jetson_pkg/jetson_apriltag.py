@@ -79,7 +79,7 @@ class ApriltagPublisher(Node):
                 msg_no_offset.linear.z = relative_z
                 msg_no_offset.linear.y = relative_y
                 
-                self.get_logger().info(f'{msg_no_offset}')
+                self.get_logger().debug(f'{msg_no_offset}')
                 self.publisher_.publish(msg_no_offset)
         except cv2.error as e:
             self.get_logger().error(f"OpenCV error: {e}")
