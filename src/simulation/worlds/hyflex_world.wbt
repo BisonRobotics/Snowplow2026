@@ -6,7 +6,7 @@ WorldInfo {
 }
 Viewpoint {
   orientation -0.36094201177131624 -0.6776259655056773 0.6407370092409004 4.982917662566233
-  position -5.123982878636374 5.140995502667831 10.008317838079629
+  position -4.170269407376776 3.9887368158631373 7.845737642261504
   follow "hyflex"
   followType "Mounted Shot"
 }
@@ -30,8 +30,10 @@ Robot {
           lens Lens {
           }
           focus Focus {
+            focalLength 0.00338
           }
           zoom Zoom {
+            maxFieldOfView 1.54793
           }
         }
         DEF FRONT_BODY Transform {

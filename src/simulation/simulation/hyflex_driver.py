@@ -4,9 +4,6 @@ from std_msgs.msg import Int8, Float32
 from utilities.tools import Tools
 import numpy as np
 
-HALF_DISTANCE_BETWEEN_WHEELS = 0.045
-WHEEL_RADIUS = 0.025
-
 class HyflexDriver:
     def init(self, webots_node, properties):
         self.__robot = webots_node.robot
