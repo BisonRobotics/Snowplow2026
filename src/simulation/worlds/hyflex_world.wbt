@@ -27,6 +27,8 @@ Robot {
       children [
         Camera {
           translation 0.05 0 0.5
+          width 640
+          height 480
           lens Lens {
           }
           focus Focus {

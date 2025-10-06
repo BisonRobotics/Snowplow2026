@@ -25,8 +25,6 @@ setup(
     license='TODO: License declaration',
     tests_require=['pytest'],
     entry_points={
-        'console_scripts': [
-            'hyflex_driver = hyflex.hyflex_driver:main',
-        ],
+        'console_scripts': [],
     },
 )
