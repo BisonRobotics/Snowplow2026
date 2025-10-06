@@ -4,6 +4,8 @@ from std_msgs.msg import Int8, Float32
 from utilities.tools import Tools
 import numpy as np
 
+from simulation.simulated_camera import SimulatedCamera
+
 class HyflexDriver:
     def init(self, webots_node, properties):
         self.__robot = webots_node.robot
@@ -41,18 +43,26 @@ class HyflexDriver:
         self.__pivot_sensor = self.__robot.getDevice('pivot_sensor')
         self.__pivot_sensor.enable(int(self.__robot.getBasicTimeStep()))
 
-        self.__camera_sensor = self.__robot.getDevice('camera')
-        self.__camera_sensor.enable(int(self.__robot.getBasicTimeStep()))
-
         rclpy.init(args=None)
         self.__node = rclpy.create_node('hyflex_driver')
+
+        # Subscriptions
         self.__node.create_subscription(Twist, '/cmd_vel', self.__cmd_vel_callback, 1)
         self.__node.create_subscription(Int8, '/vehicle/pivot', self.__pivot_callback, 10)
         self.__node.create_subscription(Twist, '/vehicle/plow', self.__plow_callback, 10)
 
+        # Image Publication
+        self.__camera = SimulatedCamera(
+            self.__node,
+            self.__robot,
+            'camera'
+        )
+
+        # Sensor Publication
         self.__pivot_pub = self.__node.create_publisher(Float32, '/sensor/pivot', 1)
 
         self.__node.create_timer(0.1, self.__publish_sensors)
+        self.__node.create_timer(1 / 30, self.__camera.publish_images) # Publish at 30 FPS
 
     def __publish_sensors(self):
         pivot_value = self.__pivot_sensor.getValue()
