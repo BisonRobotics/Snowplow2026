@@ -42,11 +42,8 @@ class ApriltagPublisher(Node):
         threading.Thread(target=self.keep_up_thread, daemon=True).start()
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
-        self.create_subscription(Image, 'var_camera/img', self.image_callback)
-        self.create_subscription(CameraInfo, 'var_camera/cam_info', self.set_cam_info_fx)
-        self.create_subscription(CameraInfo, 'var_camera/cam_info', self.set_cam_info_fy)
-        self.create_subscription(CameraInfo, 'var_camera/cam_info', self.set_cam_info_cx)
-        self.create_subscription(CameraInfo, 'var_camera/cam_info', self.set_cam_info_cy)
+        self.create_subscription(Image, f'{self.cap}/img', self.image_callback)
+        self.create_subscription(CameraInfo, f'{self.cap}/cam_info', self.set_cam_info)
 
     def keep_up_thread(self):
         while True:
@@ -64,16 +61,13 @@ class ApriltagPublisher(Node):
         except Exception as e:
             self.get_logger().error(f"Error converting image: {e}")
 
-    def set_cam_info_fx(self):
+    def set_cam_info(self):
         self.fx = CameraInfo.k[0]
         self.get_logger().info(f"Camera fx set to: {self.fx}")
-    def set_cam_info_fy(self):
         self.fy = CameraInfo.k[4]
         self.get_logger().info(f"Camera fy set to: {self.fy}")
-    def set_cam_info_cx(self):
         self.cx = CameraInfo.k[2]
         self.get_logger().info(f"Camera cx set to: {self.cx}")
-    def set_cam_info_cy(self):
         self.cy = CameraInfo.k[5]
         self.get_logger().info(f"Camera cy set to: {self.cy}")
     
