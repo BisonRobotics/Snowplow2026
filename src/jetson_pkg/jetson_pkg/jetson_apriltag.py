@@ -2,6 +2,7 @@ import rclpy
 from rclpy.node import Node
 
 from geometry_msgs.msg import Twist
+from sensor_msgs.msg import Image, CameraInfo
 from jetson_pkg.apriltag_interpretation import apriltag_interpretation
 
 import math
@@ -41,6 +42,12 @@ class ApriltagPublisher(Node):
         threading.Thread(target=self.keep_up_thread, daemon=True).start()
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
+        self.create_subscription(Image, 'var_camera/img', self.image_callback)
+        self.create_subscription(CameraInfo, 'var_camera/cam_info', self.set_cam_info_fx)
+        self.create_subscription(CameraInfo, 'var_camera/cam_info', self.set_cam_info_fy)
+        self.create_subscription(CameraInfo, 'var_camera/cam_info', self.set_cam_info_cx)
+        self.create_subscription(CameraInfo, 'var_camera/cam_info', self.set_cam_info_cy)
+
     def keep_up_thread(self):
         while True:
             if self.cap is not None and self.cap.isOpened():
@@ -49,7 +56,27 @@ class ApriltagPublisher(Node):
                     self.latest_frame = frame
                 else:
                     self.get_logger().warning("Failed to read frame from video capture device.")
+    
+    def image_callback(self, msg):
+        try:
+            cv_image = CvBridge().imgmsg_to_cv2(msg, desired_encoding='rgb8')
+            self.latest_frame = cv_image
+        except Exception as e:
+            self.get_logger().error(f"Error converting image: {e}")
 
+    def set_cam_info_fx(self):
+        self.fx = CameraInfo.k[0]
+        self.get_logger().info(f"Camera fx set to: {self.fx}")
+    def set_cam_info_fy(self):
+        self.fy = CameraInfo.k[4]
+        self.get_logger().info(f"Camera fy set to: {self.fy}")
+    def set_cam_info_cx(self):
+        self.cx = CameraInfo.k[2]
+        self.get_logger().info(f"Camera cx set to: {self.cx}")
+    def set_cam_info_cy(self):
+        self.cy = CameraInfo.k[5]
+        self.get_logger().info(f"Camera cy set to: {self.cy}")
+    
     def timer_callback(self):
         if self.latest_frame is None:
             self.get_logger().warning("No frame available for processing.")
