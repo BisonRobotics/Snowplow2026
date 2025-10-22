@@ -7,7 +7,6 @@ from jetson_pkg.apriltag_interpretation import apriltag_interpretation
 
 import math
 import numpy as np
-import threading
 import cv2
 import apriltag
 
@@ -20,39 +19,20 @@ class ApriltagPublisher(Node):
         self.latest_frame = None
 
         # Declare parameters with default values
-        self.declare_parameter('cap', '')
-        self.declare_parameter('fx', 1.0)
-        self.declare_parameter('fy', 1.0)
-        self.declare_parameter('cx', 0.0)
-        self.declare_parameter('cy', 0.0)
+        self.declare_parameter('camera_name', '')
 
         # Assign parameters
-        cap_value = self.get_parameter('cap').value
-        self.cap = cv2.VideoCapture(cap_value) if cap_value else None
-        self.fx = self.get_parameter('fx').value
-        self.fy = self.get_parameter('fy').value
-        self.cx = self.get_parameter('cx').value
-        self.cy = self.get_parameter('cy').value
-
-        if self.cap is None or not self.cap.isOpened():
-            self.get_logger().error("Failed to open video capture device. Please check the connection string.")
-            raise ValueError("Failed to open video capture device. Please check the connection string.")
+        camera_name = self.get_parameter('camera_name').value
+        self.fx = None
+        self.fy = None
+        self.cx = None
+        self.cy = None
 
         self.detector = apriltag.Detector()  # Initialize the detector
-        threading.Thread(target=self.keep_up_thread, daemon=True).start()
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
-        self.create_subscription(Image, f'{self.cap}/img', self.image_callback)
-        self.create_subscription(CameraInfo, f'{self.cap}/cam_info', self.set_cam_info)
-
-    def keep_up_thread(self):
-        while True:
-            if self.cap is not None and self.cap.isOpened():
-                success, frame = self.cap.read()
-                if success:
-                    self.latest_frame = frame
-                else:
-                    self.get_logger().warning("Failed to read frame from video capture device.")
+        self.create_subscription(Image, f'{camera_name}/img', self.image_callback)
+        self.create_subscription(CameraInfo, f'{camera_name}/cam_info', self.set_cam_info)
     
     def image_callback(self, msg):
         try:
@@ -63,15 +43,20 @@ class ApriltagPublisher(Node):
 
     def set_cam_info(self):
         self.fx = CameraInfo.k[0]
-        self.get_logger().info(f"Camera fx set to: {self.fx}")
         self.fy = CameraInfo.k[4]
-        self.get_logger().info(f"Camera fy set to: {self.fy}")
         self.cx = CameraInfo.k[2]
-        self.get_logger().info(f"Camera cx set to: {self.cx}")
         self.cy = CameraInfo.k[5]
+
+        self.get_logger().info(f"Camera fx set to: {self.fx}")
+        self.get_logger().info(f"Camera fy set to: {self.fy}")
+        self.get_logger().info(f"Camera cx set to: {self.cx}")
         self.get_logger().info(f"Camera cy set to: {self.cy}")
     
     def timer_callback(self):
+        if self.fx is None or self.fy is None or self.cx is None or self.cy is None:
+            self.get_logger().error("Camera intrinsic parameters (fx, fy, cx, cy) are not set.")
+            return
+
         if self.latest_frame is None:
             self.get_logger().warning("No frame available for processing.")
             return
