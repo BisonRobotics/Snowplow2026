@@ -54,14 +54,14 @@ class Hdc2460():
 
     def setMotor(self,ch:int,speed:float32):
         """Tells the HDC2460 to move at set speed"""
-        speed = round(speed*500)
+        intSpeed = round(speed*500)
         #clamp speed, format, and send it of to the roboteq
         #speed = Tools.clamp(speed, -self.maxSpeed, self.maxSpeed)
 
         #Roboteq speed input is from -1000 to 1000. Just in case max speed > 1000.
-        speed = Tools.clamp(speed, -1000, 1000)
+        intSpeed = Tools.clamp(intSpeed, -1000, 1000)
         #send command to
-        self.sendCommand(f"!G {ch} {speed}")
+        self.sendCommand(f"!G {ch} {intSpeed}")
 
     def stopMotor(self, ch:int):
         """Stops the motor for the specified channel."""

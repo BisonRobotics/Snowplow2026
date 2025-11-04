@@ -12,9 +12,7 @@ from utilities.tools import Tools
 class Hdc2460Node(Node):
     def __init__(self):
         super().__init__("hdc2460")
-        self.set_parameters_atomically(self.declare_parameters(
-            namespace='',
-            parameters=[
+        params = [
                 ('facSerialPort',"/dev/ttyS1"),
                 ('bacSerialPort',"/dev/ttyS0"),
                 ('serialBitRate',115200),
@@ -32,39 +30,47 @@ class Hdc2460Node(Node):
                 ('plowRightChannel',4),
                 ('plowUpChannel',5),
                 ('plowDownChannel',6)
-            ]
-        ))
+        ]
+        # Declare parameters (suppress static type-checker mismatch in rclpy stubs)
+        self.set_parameters_atomically(self.declare_parameters(namespace='', parameters=params))
         #Start subscriptions
         self.speedSubscription = self.create_subscription(Twist, '/cmd_vel', self.speed, 10)
-        self.speedSubscription  # prevent unused variable warning
         self.pivotSubscription = self.create_subscription(Int8, '/vehicle/pivot', self.pivot, 10)
-        self.pivotSubscription  # prevent unused variable warning
         self.plowSubscription = self.create_subscription(Twist, '/vehicle/plow', self.plow, 10)
-        self.plowSubscription  # prevent unused variable warning
         self.pivotpublisher = self.create_publisher(Float32, '/sensor/pivot', 10)
-        #self.flEnc = self.create_publisher(Int32, '/sensor/wheel/frontleft', 10)
-        #self.frEnc = self.create_publisher(Int32, '/sensor/wheel/frontright', 10)
-        #self.rlEnc = self.create_publisher(Int32, '/sensor/wheel/rearleft', 10)
-        #self.rrEnc = self.create_publisher(Int32, '/sensor/wheel/rearright', 10)
         
         #Get all parameters
         facSerialPort = str(self.get_parameter('facSerialPort').value)
         bacSerialPort = str(self.get_parameter('bacSerialPort').value)
-        bitRate = int(self.get_parameter('serialBitRate').value)
-        leftChannel = int(self.get_parameter('leftChannel').value)
-        rightChannel = int(self.get_parameter('rightChannel').value)
-        maxSpeed = int(self.get_parameter('maxSpeed').value)
-        accelRate = int(self.get_parameter('accelRate').value)
-        brakeRate = int(self.get_parameter('brakeRate').value)
+        bitRate_param = self.get_parameter('serialBitRate').value
+        bitRate = int(bitRate_param) if bitRate_param is not None else 115200
+        leftChannel_param = self.get_parameter('leftChannel').value
+        leftChannel = int(leftChannel_param) if leftChannel_param is not None else 1
+        rightChannel_param = self.get_parameter('rightChannel').value
+        rightChannel = int(rightChannel_param) if rightChannel_param is not None else 2
+        maxSpeed_param = self.get_parameter('maxSpeed').value
+        maxSpeed = int(maxSpeed_param) if maxSpeed_param is not None else 500
+        accelRate_param = self.get_parameter('accelRate').value
+        accelRate = int(accelRate_param) if accelRate_param is not None else 31860
+        brakeRate_param = self.get_parameter('brakeRate').value
+        brakeRate = int(brakeRate_param) if brakeRate_param is not None else 10620
         self.pivotDevice = str(self.get_parameter('pivotDevice').value)
-        self.pivotLeft = int(self.get_parameter('pivotExtendChannel').value)
-        self.pivotRight = int(self.get_parameter('pivotRetractChannel').value)
+        pivotLeft_param = self.get_parameter('pivotExtendChannel').value
+        self.pivotLeft = int(pivotLeft_param) if pivotLeft_param is not None else 1
+        pivotRight_param = self.get_parameter('pivotRetractChannel').value
+        self.pivotRight = int(pivotRight_param) if pivotRight_param is not None else 2
         self.plowDevice = str(self.get_parameter('plowDevice').value)
-        self.plowLeft = int(self.get_parameter('plowLeftChannel').value)
-        self.plowRight = int(self.get_parameter('plowRightChannel').value)
-        self.plowUp = int(self.get_parameter('plowUpChannel').value)
-        self.plowDown = int(self.get_parameter('plowDownChannel').value)
-        self.pivotSensor = int(self.get_parameter('pivotSensorChannel').value)
+        plowLeft_param = self.get_parameter('plowLeftChannel').value
+        self.plowLeft = int(plowLeft_param) if plowLeft_param is not None else 3
+        plowRight_param = self.get_parameter('plowRightChannel').value
+        self.plowRight = int(plowRight_param) if plowRight_param is not None else 4
+        plowUp_param = self.get_parameter('plowUpChannel').value
+        self.plowUp = int(plowUp_param) if plowUp_param is not None else 5
+        plowDown_param = self.get_parameter('plowDownChannel').value
+        self.plowDown = int(plowDown_param) if plowDown_param is not None else 6
+        pivotSensor_param = self.get_parameter('pivotSensorChannel').value
+        self.pivotSensor = int(pivotSensor_param) if pivotSensor_param is not None else 1
+
 
         self.fac = Hdc2460(facSerialPort,bitRate,leftChannel,rightChannel)
         self.bac = Hdc2460(bacSerialPort,bitRate,leftChannel,rightChannel)
@@ -122,11 +128,11 @@ class Hdc2460Node(Node):
         chU = int(self.plowLeft)
         chD = int(self.plowLeft)
         if self.pivotDevice.casefold() == "FAC".casefold():
-            self.fac.actuate(cmd.x,chR,chL)
-            self.fac.actuate(cmd.y,chU,chD)
+            self.fac.actuate(int(cmd.x),chR,chL)
+            self.fac.actuate(int(cmd.y),chU,chD)
         elif self.pivotDevice.casefold() == "BAC".casefold():
-            self.bac.actuate(cmd.x,chR,chL)
-            self.bac.actuate(cmd.y,chU,chD)
+            self.bac.actuate(int(cmd.x),chR,chL)
+            self.bac.actuate(int(cmd.y),chU,chD)
         else:
             self.get_logger().warning("No plow device configured.")
         self.get_logger().debug("Roboteq: Val={0:.4f} Ch1={0} Ch2={0}".format(cmd.x,chR,chL))
