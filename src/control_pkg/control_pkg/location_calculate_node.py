@@ -4,6 +4,7 @@ from std_msgs.msg import Float32
 from geometry_msgs.msg import Vector3
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Imu
+from geometry_msgs.msg import Quaternion
 import math
 
 
@@ -12,7 +13,7 @@ import math
 class Location_Calculate(Node):
     def __init__(self):
         super().__init__('location_calculate_publisher')
-        self.publisher_ = self.create_publisher(Vector3, '/location_calculate', 10)
+        self.publisher_ = self.create_publisher(Quaternion, '/location_calculate', 10)
 
         
         #start publisher callback with timer
@@ -57,7 +58,7 @@ class Location_Calculate(Node):
 
     def sub_callback_sPot(self, msg:Float32):
         #grab angle of robot to correct IMU orientation
-        self.string_pot_angle = msg / 2
+        self.string_pot_angle = msg
 
     def sub_callback_IMU(self, msg:Imu):
         #grab orientation from imu publisher
@@ -90,7 +91,7 @@ class Location_Calculate(Node):
     #uses left wheel speed and right wheel speed over a time frame
     #returns the change in orientation avg distance between 
     #left and right wheels and direct
-    def update_odometry(left:float, right:float, time_frame:float=1.0/600.0):
+    def update_odometry(self, left:float, right:float, time_frame:float=1.0/600.0):
         wc:float = 0.43 * math.pi
 
         #wheel track in meters
@@ -117,7 +118,7 @@ class Location_Calculate(Node):
     def callback(self):
         self.time += .1
 
-        msg = Vector3()
+        msg = Quaternion()
 
         #test to see which data method to use. first april tag and then wheel odometry/imu
         if self.time_april > self.time - 0.15:
@@ -160,7 +161,8 @@ class Location_Calculate(Node):
             #update "true" location
         msg.x = self.location_x
         msg.y = self.location_y
-        msg.z = self.orientation
+        msg.z = (self.orientation + (self.string_pot_angle / 2.0)) % 360
+        msg.w = (self.orientation - (self.string_pot_angle / 2.0)) % 360
     
     
 
