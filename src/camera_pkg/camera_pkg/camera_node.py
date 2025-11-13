@@ -59,8 +59,8 @@ class CameraPublisher(Node):
         self.bridge = CvBridge()
 
         self.camera_info_publisher = self.create_publisher(CameraInfo, 'camera_info', 10)
-        self.image_publisher = self.create_publisher(Image, 'image_raw', 10)
-        self.grayscale_image_publisher = self.create_publisher(Image, 'image_grayscale_raw', 10)
+        self.image_publisher = self.create_publisher(Image, 'image_color', 10)
+        self.grayscale_image_publisher = self.create_publisher(Image, 'image_grayscale', 10)
         
         timer_period = 0.03
         self.timer = self.create_timer(timer_period, self.timer_callback)

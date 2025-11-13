@@ -1,12 +1,13 @@
 #VRML_SIM R2025a utf8
 
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/advertising_board/protos/AdvertisingBoard.proto"
 
 WorldInfo {
 }
 Viewpoint {
-  orientation -0.36094201177131624 -0.6776259655056773 0.6407370092409004 4.982917662566233
-  position -4.170269407376776 3.9887368158631373 7.845737642261504
+  orientation -0.15234605953585642 -0.38875864248357334 0.9086569187753024 5.779615258876183
+  position -9.55942297250132 7.519187909319432 4.376639306819561
   follow "hyflex"
   followType "Mounted Shot"
 }
@@ -235,4 +236,48 @@ Robot {
   physics Physics {
   }
   controller "<extern>"
+}
+AdvertisingBoard {
+  translation 4 0 0
+  name "tag 0"
+  frontTexture [
+    "../resource/textures/0.png"
+  ]
+  backTexture [
+    "../resource/textures/0.png"
+  ]
+  displayWidth 1
+  displayHeight 1
+  frameThickness 0.1
+  poleThickness 0.1
+}
+AdvertisingBoard {
+  translation 2.5 3 0
+  rotation 0 0 1 1.5707996938995747
+  name "tag 1"
+  frontTexture [
+    "../resource/textures/1.png"
+  ]
+  backTexture [
+    "../resource/textures/1.png"
+  ]
+  displayWidth 1
+  displayHeight 1
+  frameThickness 0.1
+  poleThickness 0.1
+}
+AdvertisingBoard {
+  translation 2.5 -3 0
+  rotation 0 0 1 -1.5708
+  name "tag 2"
+  frontTexture [
+    "../resource/textures/2.png"
+  ]
+  backTexture [
+    "../resource/textures/2.png"
+  ]
+  displayWidth 1
+  displayHeight 1
+  frameThickness 0.1
+  poleThickness 0.1
 }

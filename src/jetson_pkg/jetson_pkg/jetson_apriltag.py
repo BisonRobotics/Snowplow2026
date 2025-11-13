@@ -1,107 +1,117 @@
 import rclpy
 from rclpy.node import Node
 
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist, Pose, Point, Quaternion
 from sensor_msgs.msg import Image, CameraInfo
 from jetson_pkg.apriltag_interpretation import apriltag_interpretation
 
 import math
 import numpy as np
-import threading
 import cv2
-import apriltag
+import pupil_apriltags
+from cv_bridge import CvBridge
+import tf_transformations
 
 class ApriltagPublisher(Node):
     def __init__(self):
         super().__init__('apriltag_publisher')
-        self.oldpublisher_ = self.create_publisher(Twist, '/old_apriltag', 10)
-        self.publisher_ = self.create_publisher(Twist, '/apriltag', 10)
+
+        self.publisher = self.create_publisher(Pose, 'apriltag', 10)
         timer_period = 0.5
         self.latest_frame = None
 
         # Declare parameters with default values
-        self.declare_parameter('cap', '')
-        self.declare_parameter('fx', 1.0)
-        self.declare_parameter('fy', 1.0)
-        self.declare_parameter('cx', 0.0)
-        self.declare_parameter('cy', 0.0)
+        self.declare_parameter('camera_name', '')
+
+        self.declare_parameter('tag_size', 0.3254375)
+        self.tag_size = self.get_parameter('tag_size').value
 
         # Assign parameters
-        cap_value = self.get_parameter('cap').value
-        self.cap = cv2.VideoCapture(cap_value) if cap_value else None
-        self.fx = self.get_parameter('fx').value
-        self.fy = self.get_parameter('fy').value
-        self.cx = self.get_parameter('cx').value
-        self.cy = self.get_parameter('cy').value
+        camera_name = self.get_parameter('camera_name').value
+        self.fx = None
+        self.fy = None
+        self.cx = None
+        self.cy = None
 
-        if self.cap is None or not self.cap.isOpened():
-            self.get_logger().error("Failed to open video capture device. Please check the connection string.")
-            raise ValueError("Failed to open video capture device. Please check the connection string.")
-
-        self.detector = apriltag.Detector()  # Initialize the detector
-        threading.Thread(target=self.keep_up_thread, daemon=True).start()
+        self.detector = pupil_apriltags.Detector()  # Initialize the detector
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
-        self.create_subscription(Image, f'{self.cap}/img', self.image_callback)
-        self.create_subscription(CameraInfo, f'{self.cap}/cam_info', self.set_cam_info)
-
-    def keep_up_thread(self):
-        while True:
-            if self.cap is not None and self.cap.isOpened():
-                success, frame = self.cap.read()
-                if success:
-                    self.latest_frame = frame
-                else:
-                    self.get_logger().warning("Failed to read frame from video capture device.")
+        self.create_subscription(Image, f'{camera_name}/image_color', self.image_callback, 10)
+        self.create_subscription(CameraInfo, f'{camera_name}/camera_info', self.set_cam_info, 10)
     
-    def image_callback(self, msg):
+    def image_callback(self, msg: Image):
         try:
             cv_image = CvBridge().imgmsg_to_cv2(msg, desired_encoding='rgb8')
             self.latest_frame = cv_image
         except Exception as e:
             self.get_logger().error(f"Error converting image: {e}")
 
-    def set_cam_info(self):
-        self.fx = CameraInfo.k[0]
-        self.get_logger().info(f"Camera fx set to: {self.fx}")
-        self.fy = CameraInfo.k[4]
-        self.get_logger().info(f"Camera fy set to: {self.fy}")
-        self.cx = CameraInfo.k[2]
-        self.get_logger().info(f"Camera cx set to: {self.cx}")
-        self.cy = CameraInfo.k[5]
-        self.get_logger().info(f"Camera cy set to: {self.cy}")
+    def set_cam_info(self, cam_info: CameraInfo):
+        self.fx = cam_info.k[0]
+        self.fy = cam_info.k[4]
+        self.cx = cam_info.k[2]
+        self.cy = cam_info.k[5]
+
+        self.get_logger().debug(
+            f"Camera intrinsics set: fx={self.fx}, fy={self.fy}, cx={self.cx}, cy={self.cy}"
+        )
     
     def timer_callback(self):
         if self.latest_frame is None:
             self.get_logger().warning("No frame available for processing.")
             return
+        
+        if self.fx is None or self.fy is None or self.cx is None or self.cy is None:
+            self.get_logger().error("Camera intrinsic parameters (fx, fy, cx, cy) are not set.")
+            return
 
         try:
             gray = cv2.cvtColor(self.latest_frame, cv2.COLOR_RGB2GRAY)
-            detections = self.detector.detect(gray)
-            if len(detections) > 0:
-                pose, _, _ = self.detector.detection_pose(detections[0], [self.fx, self.fy, self.cx, self.cy], 0.3254375)
-                relative_x = pose[0][3] + -0.017
-                relative_z = pose[2][3] + 0.83
-                relative_rotation = np.arcsin(-pose[2][0]) * (180 / math.pi)
-                xr, zr, thetar = apriltag_interpretation(0, 3.71, 270, relative_x, relative_z, relative_rotation)
-                msg = Twist()
-                msg.linear.x = xr
-                msg.linear.z = zr
-                msg.angular.y = thetar
-                self.oldpublisher_.publish(msg)
-                #new without math
-                relative_x = pose[0][3]
-                relative_y = pose[1][3]
-                relative_z = pose[2][3]
+            detections = self.detector.detect(
+                img=gray,
+                estimate_tag_pose=True,
+                camera_params=(self.fx, self.fy, self.cx, self.cy),
+                tag_size=self.tag_size
+            )
 
-                msg_no_offset = Twist()
-                msg_no_offset.linear.x = relative_x
-                msg_no_offset.linear.z = relative_z
-                msg_no_offset.linear.y = relative_y
-                
-                self.get_logger().debug(f'{msg_no_offset}')
-                self.publisher_.publish(msg_no_offset)
+            for detection in detections:
+                self.get_logger().info(f'Detected tag ID: {detection.tag_id}')
+
+                # Use pose_t and pose_R as per documentation
+                if detection.pose_t is None or detection.pose_R is None:
+                    self.get_logger().warning("No pose estimate available for detection.")
+                    continue
+
+                # Translation vector (3x1)
+                pose_t = np.array(detection.pose_t).flatten()
+                x = float(pose_t[0])
+                y = float(pose_t[1])
+                z = float(pose_t[2])
+
+                # Rotation matrix (3x3)
+                rot_matrix = np.array(detection.pose_R)
+                # Build 4x4 transformation matrix for quaternion conversion
+                T = np.eye(4)
+                T[:3, :3] = rot_matrix
+                # tf_transformations expects a 4x4 matrix
+                quat = tf_transformations.quaternion_from_matrix(T)
+
+                pose_msg = Pose(
+                    position=Point(
+                        x=x,
+                        y=y,
+                        z=z,
+                    ),
+                    orientation=Quaternion(
+                        x=float(quat[0]),
+                        y=float(quat[1]),
+                        z=float(quat[2]),
+                        w=float(quat[3]),
+                    )
+                )
+
+                self.get_logger().debug(f'{pose_msg}')
+                self.publisher.publish(pose_msg)
         except cv2.error as e:
             self.get_logger().error(f"OpenCV error: {e}")
         

@@ -4,7 +4,7 @@ from launch import LaunchDescription
 from ament_index_python.packages import get_package_share_directory
 from webots_ros2_driver.webots_launcher import WebotsLauncher
 from webots_ros2_driver.webots_controller import WebotsController
-
+from launch_ros.actions import Node
 
 def generate_launch_description():
     package_dir = get_package_share_directory('simulation')
@@ -29,5 +29,14 @@ def generate_launch_description():
                 target_action=webots,
                 on_exit=[launch.actions.EmitEvent(event=launch.events.Shutdown())],
             )
+        ),
+        Node(
+            package='jetson_pkg',
+            executable='apriltag',
+            name='apriltag',
+            parameters=[
+                {'camera_name': '/hyflex/camera'}
+            ],
+            namespace='hyflex'
         )
     ])
