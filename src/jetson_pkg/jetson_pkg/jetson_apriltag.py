@@ -58,6 +58,10 @@ class ApriltagPublisher(Node):
         )
     
     def timer_callback(self):
+        if self.fx is None or self.fy is None or self.cx is None or self.cy is None:
+            self.get_logger().error("Camera intrinsic parameters (fx, fy, cx, cy) are not set.")
+            return
+
         if self.latest_frame is None:
             self.get_logger().warning("No frame available for processing.")
             return
