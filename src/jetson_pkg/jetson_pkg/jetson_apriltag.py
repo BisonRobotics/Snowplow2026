@@ -3,6 +3,7 @@ from rclpy.node import Node
 
 from geometry_msgs.msg import Twist, Pose, Point, Quaternion
 from sensor_msgs.msg import Image, CameraInfo
+from custom_msgs.msg import Apriltag
 from jetson_pkg.apriltag_interpretation import apriltag_interpretation
 
 import math
@@ -16,7 +17,7 @@ class ApriltagPublisher(Node):
     def __init__(self):
         super().__init__('apriltag_publisher')
 
-        self.publisher = self.create_publisher(Pose, 'apriltag', 10)
+        self.publisher = self.create_publisher(Apriltag, 'apriltag', 10)
         timer_period = 0.5
         self.latest_frame = None
 
@@ -110,8 +111,13 @@ class ApriltagPublisher(Node):
                     )
                 )
 
-                self.get_logger().debug(f'{pose_msg}')
-                self.publisher.publish(pose_msg)
+                apriltag_msg = Apriltag(
+                    tag_id=int(detection.tag_id),
+                    pose=pose_msg
+                )
+
+                self.get_logger().debug(f'{apriltag_msg}')
+                self.publisher.publish(apriltag_msg)
         except cv2.error as e:
             self.get_logger().error(f"OpenCV error: {e}")
         
