@@ -14,8 +14,8 @@ XBOX_DPAD_LEFTRIGHT = 6
 XBOX_RIGHT_Y = 3
 
 # XBOX Buttons
-XBOX_LEFT_PALM = 23
-XBOX_RIGHT_PALM = 19
+XBOX_A_BUTTON = 0
+XBOX_B_BUTTON = 1
 XBOX_Y_BUTTON = 4
 
 
@@ -45,8 +45,8 @@ class JoyConv(Node):
 
     def calculate_pivot(self, joy_msg:Joy) -> Int8:
         msg = Int8()
-        right = int(joy_msg.buttons[XBOX_RIGHT_PALM])
-        left = int(joy_msg.buttons[XBOX_LEFT_PALM])
+        right = int(joy_msg.buttons[XBOX_B_BUTTON])
+        left = int(joy_msg.buttons[XBOX_A_BUTTON])
         y_button = int(joy_msg.buttons[XBOX_Y_BUTTON])
         if y_button > 0:
             self.pivot_to_middle = True
