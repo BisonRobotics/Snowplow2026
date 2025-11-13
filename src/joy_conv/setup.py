@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'joy_conv = joy_conv.joy_conv:main'
+            'joy_conv = joy_conv.joy_conv:main',
+            'keyboard_conv = joy_conv.keyboard_conv:main',
         ],
     },
 )
