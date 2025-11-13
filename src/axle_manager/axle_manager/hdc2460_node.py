@@ -33,7 +33,8 @@ class Hdc2460Node(Node):
         ]
         # Declare parameters (suppress static type-checker mismatch in rclpy stubs)
         self.set_parameters_atomically(self.declare_parameters(namespace='', parameters=params))
-        #Start subscriptions
+        
+        # Start subscriptions
         self.speedSubscription = self.create_subscription(Twist, '/cmd_vel', self.speed, 10)
         self.pivotSubscription = self.create_subscription(Int8, '/vehicle/pivot', self.pivot, 10)
         self.plowSubscription = self.create_subscription(Twist, '/vehicle/plow', self.plow, 10)
@@ -70,7 +71,6 @@ class Hdc2460Node(Node):
         self.plowDown = int(plowDown_param) if plowDown_param is not None else 6
         pivotSensor_param = self.get_parameter('pivotSensorChannel').value
         self.pivotSensor = int(pivotSensor_param) if pivotSensor_param is not None else 1
-
 
         self.fac = Hdc2460(facSerialPort,bitRate,leftChannel,rightChannel)
         self.bac = Hdc2460(bacSerialPort,bitRate,leftChannel,rightChannel)
