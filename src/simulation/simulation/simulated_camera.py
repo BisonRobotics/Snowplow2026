@@ -47,7 +47,7 @@ class SimulatedCamera:
                 ros_gray_image.header.stamp = self.__node.get_clock().now().to_msg()
                 self.grayscale_image_publisher.publish(ros_gray_image)
 
-                self.__node.get_logger().info('Publishing image')
+                self.__node.get_logger().debug('Publishing image')
             except Exception as e:
                 self.__node.get_logger().error(f'Error converting or publishing image: {e}')
         else:

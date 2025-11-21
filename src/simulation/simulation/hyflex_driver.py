@@ -65,11 +65,11 @@ class HyflexDriver:
         self.__node.create_timer(1 / 30, self.__camera.publish_images) # Publish at 30 FPS
 
     def __publish_sensors(self):
-        pivot_value = self.__pivot_sensor.getValue()
-        pivot_degrees = np.rad2deg(pivot_value)
+        pivot_value: float = self.__pivot_sensor.getValue()
+        pivot_degrees: float = np.rad2deg(pivot_value)
 
         pivot_msg = Float32()
-        pivot_msg.data = Tools.potentiometer_to_degrees(pivot_value)
+        pivot_msg.data = Tools.degrees_to_potentiometer(pivot_degrees)
         self.__pivot_pub.publish(pivot_msg)
 
         self.__pivot_angle = pivot_degrees
