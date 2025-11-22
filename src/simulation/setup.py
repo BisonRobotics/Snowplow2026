@@ -10,6 +10,9 @@ data_files.append(('share/' + package_name + '/resource/meshes/hyflex', ['resour
 data_files.append(('share/' + package_name + '/resource/meshes/hyflex', ['resource/meshes/hyflex/base_link_collision.stl']))
 data_files.append(('share/' + package_name + '/resource/meshes/hyflex', ['resource/meshes/hyflex/base_link.dae']))
 data_files.append(('share/' + package_name + '/resource/meshes/hyflex', ['resource/meshes/hyflex/wheel_collision.stl']))
+data_files.append(('share/' + package_name + '/resource/textures', ['resource/textures/0.png']))
+data_files.append(('share/' + package_name + '/resource/textures', ['resource/textures/1.png']))
+data_files.append(('share/' + package_name + '/resource/textures', ['resource/textures/2.png']))
 data_files.append(('share/' + package_name, ['package.xml']))
 
 setup(
