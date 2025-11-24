@@ -11,7 +11,7 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        ('share/'+package_name,glob('config/*params.[yaml]*'))
+        ('share/'+package_name,glob('config/*.[yaml]*'))
     ],
     install_requires=['setuptools'],
     zip_safe=True,
