@@ -7,6 +7,9 @@
   <maintainer email="brandon@todo.todo">brandon</maintainer>
   <license>MIT</license>
 
+  <depend>apriltag_ros</depend>
+  <depend>camera_ros</depend>
+
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>
