@@ -1,0 +1,25 @@
+# arena_tag_poses.yaml
+
+# Define the global pose of each AprilTag relative to the 'map' frame.
+# This config defines the required 'map -> tag' transform for localization.
+
+tag_poses:
+  # Tag ID 0 (e.g., tag36h11:0)
+  "tag36h11:0":
+    parent_frame: "map"
+    translation: [4.0, 0.0, 0.5] # [X, Y, Z] position in meters
+    rotation: [0.0, 0.0, 1.0, 0.0] # [x, y, z, w] quaternion for orientation (0,0,0,1 is no rotation)
+
+  # Tag ID 1 (e.g., tag36h11:1)
+  "tag36h11:1":
+    parent_frame: "map"
+    translation: [2.5, 3.0, 0.5]
+    # Example: 90-degree rotation around Z-axis (pointing North)
+    rotation: [0.0, 0.0, 1, 1.5708]
+
+  # Tag ID 2 (e.g., tag36h11:2)
+  "tag36h11:2":
+    parent_frame: "map"
+    translation: [2.5, -3.0, 0.5]
+    # Example: 90-degree rotation around Z-axis (pointing North)
+    rotation: [0.0, 0.0, 1, -1.5708]
