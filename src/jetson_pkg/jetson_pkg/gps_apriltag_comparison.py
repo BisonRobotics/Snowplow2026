@@ -15,6 +15,9 @@ distanceError = 0.25
 class coordinateComparison(Node):
     def __init__(self):
         super().__init__('coordinate_comparison_node')
+        self.comparison_publisher_ = self.create_publisher(Twist, '/comparison', 10)
+        timer_period = 0.5
+
         self.get_logger().info('Coordinate Comparison Node has started.')
     
         self.latest_apriltag_pose = None
@@ -35,6 +38,7 @@ class coordinateComparison(Node):
             10
         )
 
+        self.timer = self.create_timer(timer_period, self.coords_comparison)
 
     def apriltag_callback(self, msg: Twist):
         self.latest_apriltag_pose = msg
@@ -65,10 +69,19 @@ class coordinateComparison(Node):
         
         poseDifference = self.coords_distance(self.latest_apriltag_pose, self.latest_gps_pose)
 
+        output_coords = Twist()
+
         if self.is_coords_in_range(poseDifference):
             self.get_logger().info(f'Coords are in range. Distance from each other: {poseDifference: .2f}')
+            output_coords.linear.x = (self.latest_gps_pose.linear.x + self.latest_apriltag_pose.linear.x)/2
+            output_coords.linear.y = (self.latest_gps_pose.linear.y + self.latest_apriltag_pose.linear.y)/2
+
         else:
-            self.get_logger().warn(f'Coords are out of range. they are {poseDifference: .2f}m. apart')
+            self.get_logger().info(f'Coords are out of range. they are {poseDifference: .2f}m. apart')
+            output_coords.linear.x = self.latest_apriltag_pose.linear.x
+            output_coords.linear.y = self.latest_apriltag_pose.linear.y
+
+        self.comparison_publisher_.publish(output_coords)
         
 
 def main(args=None):
