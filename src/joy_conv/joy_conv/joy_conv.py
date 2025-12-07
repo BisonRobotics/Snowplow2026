@@ -6,6 +6,9 @@ from sensor_msgs.msg import Joy
 from numpy import float32
 from utilities.tools import Tools
 
+# Speed multiplier to drive faster
+speed_multiplier = 1.5
+
 # XBOX Axis
 XBOX_LEFT_TRIGGER = 5
 XBOX_RIGHT_TRIGGER = 4
@@ -69,7 +72,7 @@ class JoyConv(Node):
 
     def calculate_speed(self, joy_msg:Joy) -> Twist:
         msg = Twist()
-        msg.linear.x = joy_msg.axes[XBOX_RIGHT_Y] * abs(joy_msg.axes[XBOX_RIGHT_Y])
+        msg.linear.x = joy_msg.axes[XBOX_RIGHT_Y] * abs(joy_msg.axes[XBOX_RIGHT_Y]) ** speed_multiplier
         return msg
 
     def calculate_plow(self, joy_msg:Joy) -> Twist:
