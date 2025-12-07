@@ -72,7 +72,7 @@ class JoyConv(Node):
 
     def calculate_speed(self, joy_msg:Joy) -> Twist:
         msg = Twist()
-        msg.linear.x = joy_msg.axes[XBOX_RIGHT_Y] * abs(joy_msg.axes[XBOX_RIGHT_Y]) ** speed_multiplier
+        msg.linear.x = joy_msg.axes[XBOX_RIGHT_Y] * abs(joy_msg.axes[XBOX_RIGHT_Y]) * speed_multiplier
         return msg
 
     def calculate_plow(self, joy_msg:Joy) -> Twist:
