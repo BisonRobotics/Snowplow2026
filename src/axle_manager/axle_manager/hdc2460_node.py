@@ -18,9 +18,9 @@ class Hdc2460Node(Node):
                 ('serialBitRate',115200),
                 ('leftChannel',1),
                 ('rightChannel',2),
-                ('maxSpeed',500),
-                ('accelRate',31860),
-                ('brakeRate',10620),
+                ('maxSpeed',250), #500 (changed 12/8/2025)
+                ('accelRate',15930), #31860 (changed 12/8/2025)
+                ('brakeRate',5310), #10620 (changed 12/8/2025)
                 ('pivotDevice',"FAC"),
                 ('pivotExtendChannel',1),
                 ('pivotRetractChannel',2),
