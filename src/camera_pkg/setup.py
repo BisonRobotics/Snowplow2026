@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'joy_conv'
+package_name = 'camera_pkg'
 
 setup(
     name=package_name,
@@ -13,15 +13,18 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='brandon',
-    maintainer_email='brandon@todo.todo',
+    maintainer='karsten',
+    maintainer_email='karsten.larson.1@gmail.com',
     description='TODO: Package description',
-    license='TODO: License declaration',
-    tests_require=['pytest'],
+    license='Apache-2.0',
+    extras_require={
+        'test': [
+            'pytest',
+        ],
+    },
     entry_points={
         'console_scripts': [
-            'joy_conv = joy_conv.joy_conv:main',
-            'keyboard_conv = joy_conv.keyboard_conv:main',
+            'camera_node = camera_pkg.camera_node:main'
         ],
     },
 )

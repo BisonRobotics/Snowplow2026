@@ -1,0 +1,238 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/RectangleArena.proto"
+
+WorldInfo {
+}
+Viewpoint {
+  orientation -0.36094201177131624 -0.6776259655056773 0.6407370092409004 4.982917662566233
+  position -4.170269407376776 3.9887368158631373 7.845737642261504
+  follow "hyflex"
+  followType "Mounted Shot"
+}
+Background {
+  skyColor [
+    0.4 0.7 1
+  ]
+}
+RectangleArena {
+  floorSize 15 15
+  floorTileSize 1 1
+  wallHeight 0.5
+}
+Robot {
+  translation 0 0 0.15
+  children [
+    DEF FRONT Solid {
+      children [
+        Camera {
+          translation 0.05 0 0.5
+          width 640
+          height 480
+          lens Lens {
+          }
+          focus Focus {
+            focalLength 0.00338
+          }
+          zoom Zoom {
+            maxFieldOfView 1.54793
+          }
+        }
+        DEF FRONT_BODY Transform {
+          scale 0.001 0.001 0.001
+          children [
+            Shape {
+              appearance PBRAppearance {
+                baseColor 0.100023 0.53666 0.0196841
+              }
+              geometry Mesh {
+                url [
+                  "../resource/meshes/hyflex/base_link.dae"
+                ]
+              }
+            }
+          ]
+        }
+        HingeJoint {
+          jointParameters HingeJointParameters {
+            axis 0 0 1
+            anchor -0.654 0 0
+            minStop -0.32505
+            maxStop 0.32505
+          }
+          device [
+            PositionSensor {
+              name "pivot_sensor"
+            }
+            RotationalMotor {
+              name "pivot_motor"
+              maxTorque 1000
+            }
+          ]
+          endPoint DEF BACK Solid {
+            children [
+              DEF BACK_BODY Transform {
+                scale 0.001 0.001 0.001
+                children [
+                  Shape {
+                    appearance PBRAppearance {
+                      baseColor 0.100023 0.53666 0.0196841
+                    }
+                    geometry Mesh {
+                      url [
+                        "../resource/meshes/hyflex/back.dae"
+                      ]
+                    }
+                  }
+                ]
+              }
+              DEF BACK_LEFT HingeJoint {
+                jointParameters HingeJointParameters {
+                  axis 0 1 0
+                  anchor -0.978237 0.380379 0.0785005
+                }
+                device [
+                  RotationalMotor {
+                    name "back_left_motor"
+                  }
+                ]
+                endPoint Solid {
+                  translation -0.978237 0.380379 0.0785005
+                  rotation 0 1 0 0
+                  children [
+                    DEF WHEEL Shape {
+                      appearance PBRAppearance {
+                        baseColor 1 0 0
+                      }
+                      geometry Mesh {
+                        url [
+                          "../resource/meshes/hyflex/wheel_collision.stl"
+                        ]
+                      }
+                    }
+                  ]
+                  name "solid(3)"
+                  boundingObject USE WHEEL
+                  physics DEF physics_wh Physics {
+                  }
+                }
+              }
+              DEF BACK_RIGHT HingeJoint {
+                jointParameters HingeJointParameters {
+                  axis 0 1 0
+                  anchor -0.978237 -0.380379 0.0785005
+                }
+                device [
+                  RotationalMotor {
+                    name "back_right_motor"
+                  }
+                ]
+                endPoint Solid {
+                  translation -0.978237 -0.380379 0.0785005
+                  rotation 0 1 0 0
+                  children [
+                    DEF WHEEL Shape {
+                      appearance PBRAppearance {
+                        baseColor 1 0 0
+                      }
+                      geometry Mesh {
+                        url [
+                          "../resource/meshes/hyflex/wheel_collision.stl"
+                        ]
+                      }
+                    }
+                  ]
+                  name "solid(4)"
+                  boundingObject USE WHEEL
+                  physics DEF physics_wh Physics {
+                  }
+                }
+              }
+            ]
+            name "solid(5)"
+            boundingObject Mesh {
+              url [
+                "../resource/meshes/hyflex/back_collision.stl"
+              ]
+            }
+            physics Physics {
+            }
+          }
+        }
+        DEF FRONT_RIGHT HingeJoint {
+          jointParameters HingeJointParameters {
+            axis 0 1 0
+            anchor -0.275964 -0.380379 0.0785005
+          }
+          device [
+            RotationalMotor {
+              name "front_right_motor"
+            }
+          ]
+          endPoint Solid {
+            translation -0.275964 -0.380379 0.0785005
+            rotation 0 1 0 0
+            children [
+              DEF WHEEL Shape {
+                appearance PBRAppearance {
+                  baseColor 1 0 0
+                }
+                geometry Mesh {
+                  url [
+                    "../resource/meshes/hyflex/wheel_collision.stl"
+                  ]
+                }
+              }
+            ]
+            name "solid(1)"
+            boundingObject USE WHEEL
+            physics DEF physics_wh Physics {
+            }
+          }
+        }
+        DEF FRONT_LEFT HingeJoint {
+          jointParameters HingeJointParameters {
+            axis 0 1 0
+            anchor -0.2759640000000001 0.380379 0.0785005
+          }
+          device [
+            RotationalMotor {
+              name "front_left_motor"
+            }
+          ]
+          endPoint Solid {
+            translation -0.2759640000000001 0.380379 0.0785005
+            rotation 0 1 0 0
+            children [
+              DEF WHEEL Shape {
+                appearance PBRAppearance {
+                  baseColor 1 0 0
+                }
+                geometry Mesh {
+                  url [
+                    "../resource/meshes/hyflex/wheel_collision.stl"
+                  ]
+                }
+              }
+            ]
+            name "solid(2)"
+            boundingObject USE WHEEL
+            physics DEF physics_wh Physics {
+            }
+          }
+        }
+      ]
+      boundingObject Mesh {
+        url [
+          "../resource/meshes/hyflex/base_link_collision.stl"
+        ]
+      }
+      physics Physics {
+      }
+    }
+  ]
+  name "hyflex"
+  physics Physics {
+  }
+  controller "<extern>"
+}
