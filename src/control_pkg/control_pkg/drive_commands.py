@@ -33,8 +33,8 @@ class DriveTimeCommand(Command):
 # measured in m/s
 top_speed = 0.5 #1 (changed 12/8/2025)
 # measured in m/s/s
-acceleration = 1.5 #3 (changed 12/8/2025)
-deceleration = 0.5 #1 (changed 12/8/2025)
+#acceleration = #3 (changed 12/10/2025)
+#deceleration = #1 (changed 12/10/2025)
         
 class DriveDistanceCommand(DriveTimeCommand):
     """
@@ -46,8 +46,10 @@ class DriveDistanceCommand(DriveTimeCommand):
     def calculate_time(self, speed, distance) -> float:
         real_speed = abs(speed) * top_speed
         
-        acceleration_time = real_speed / acceleration
-        deceleration_time = real_speed / deceleration
+        acceleration_time = 1 #real_speed / acceleration (changed 12/10/2025)
+        acceleration = real_speed / acceleration_time
+        deceleration_time = 1 #real_speed / deceleration (changed 12/10/2025)
+        deceleration = real_speed / deceleration_time
         
         if distance < real_speed * (acceleration_time + deceleration_time) / 2:
             return sqrt((2 * distance * acceleration * deceleration) / (acceleration + deceleration)) / acceleration
