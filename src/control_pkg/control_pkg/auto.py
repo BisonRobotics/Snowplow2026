@@ -102,6 +102,7 @@ class Auto(Node):
         #Segment 1
         if(ConeInternal < 8.5):
             # Path A
+            print("Path A Used")
             segment1 = turn_to_degrees(TurningAngle)\
                     .and_then(wait(2))\
                     .and_then(drive_distance(1, 0.2))\
@@ -149,6 +150,7 @@ class Auto(Node):
         elif (ConeInternal >8.5):
             if(ConeInternal%2 ==1 ):
                 # Path B Right
+                print("Path B Right Used")
                 segment1 = turn_to_degrees(TurningAngle)\
                     .and_then(wait(2))\
                     .and_then(drive_distance(1, 0.2))\
@@ -172,6 +174,7 @@ class Auto(Node):
                     .and_then(drive_distance(-1, 0.2))
             else:
                 # Path B Left
+                print("Path B Left Used")
                 segment1 = turn_to_degrees(-TurningAngle)\
                     .and_then(wait(2))\
                     .and_then(drive_distance(1, 0.2))\
@@ -198,6 +201,7 @@ class Auto(Node):
         # Segment 2 
         if((ConeExternal == -7) and (ConeInternal%2 == 1)):
             #Path D Right
+            print("Path D Right Used")
             segment2 = turn_to_degrees(0)\
                 .and_then(wait(2))\
                 .and_then(drive_to_waypoint(right_waypoint))\
@@ -225,6 +229,7 @@ class Auto(Node):
                 .and_then(drive_distance(-1, 1.5))
         elif((ConeExternal == -1) and (ConeInternal%2 == 0)):
           # Path D Left
+            print("Path D Left Used")
             segment2 = turn_to_degrees(0)\
                 .and_then(wait(2))\
                 .and_then(drive_to_waypoint(left_waypoint))\
@@ -253,6 +258,7 @@ class Auto(Node):
         else:
            if(ConeInternal%2 == 1):
                # Path C Right
+                print("Path C Right Used")
                 segment2 = turn_to_degrees(0)\
                     .and_then(wait(2))\
                     .and_then(drive_to_waypoint(waypoint8))\
@@ -288,6 +294,7 @@ class Auto(Node):
                     .and_then(turn_to_degrees(0))
            else:
                # Path C Left
+                print("Path C Left Used")   
                 segment2 = turn_to_degrees(0)\
                     .and_then(wait(2))\
                     .and_then(drive_to_waypoint(waypoint7))\
@@ -325,6 +332,7 @@ class Auto(Node):
         #Segment 3
         if((ConeExternal == -1 and ConeInternal%2 == 1) or (ConeExternal == -7 and ConeInternal%2 == 0)):
             # Path X # More Conditional Logic tobe developed.
+            print("Path X Used - Error Condition")
             segment3 = turn_to_degrees(0).and_then(drive_distance(1, 2)) # PlaceHolder
         elif(ConeInternal%2 == 1):
             '''
@@ -333,6 +341,7 @@ class Auto(Node):
             '''
             if(not(ConeInternal == 8)):
                 # Path C.1 Right
+                print("Segment 3 Path C.1 Right Used")
                 segment3 = segment3\
                     .and_then(turn_to_degrees(0))\
                     .and_then(wait(2))\
@@ -345,6 +354,7 @@ class Auto(Node):
                     .and_then(turn_to_degrees(0))
             if(not(ConeInternal == 6)):
                 # Path C.2 Right
+                print("Segment 3 Path C.2 Right Used")
                 segment3 = segment3\
                     .and_then(turn_to_degrees(0))\
                     .and_then(wait(2))\
@@ -357,6 +367,7 @@ class Auto(Node):
                     .and_then(turn_to_degrees(0))
             if(not(ConeInternal == 4)):
                 # Path C.3 Right
+                print("Segment 3 Path C.3 Right Used")
                 segment3 = segment3\
                     .and_then(turn_to_degrees(0))\
                     .and_then(wait(2))\
@@ -369,6 +380,7 @@ class Auto(Node):
                     .and_then(turn_to_degrees(0))
             if(not(ConeInternal == 2)):
                 # Path C.4 Right
+                print("Segment 3 Path C.4 Right Used")
                 segment3 = segment3\
                     .and_then(turn_to_degrees(0))\
                     .and_then(wait(2))\
@@ -386,6 +398,7 @@ class Auto(Node):
             '''
             if(not(ConeInternal == 7)):
                 # Path C.1 Left
+                print("Segment 3 Path C.1 Left Used")
                 segment3 = segment3\
                     .and_then(turn_to_degrees(0))\
                     .and_then(wait(2))\
@@ -398,6 +411,7 @@ class Auto(Node):
                     .and_then(turn_to_degrees(0))
             if(not(ConeInternal == 5)):
                 # Path C.2 Left
+                print("Segment 3 Path C.2 Left Used")
                 segment3 = segment3\
                     .and_then(turn_to_degrees(0))\
                     .and_then(wait(2))\
@@ -410,6 +424,7 @@ class Auto(Node):
                     .and_then(turn_to_degrees(0))
             if(not(ConeInternal == 3)):
                 # Path C.3 Left
+                print("Segment 3 Path C.3 Left Used")
                 segment3 = segment3\
                     .and_then(turn_to_degrees(0))\
                     .and_then(wait(2))\
@@ -422,6 +437,7 @@ class Auto(Node):
                     .and_then(turn_to_degrees(0))
             if(not(ConeInternal == 1)):
                 # Path C.4 Left
+                print("Segment 3 Path C.4 Left Used")
                 segment3 = segment3\
                     .and_then(turn_to_degrees(0))\
                     .and_then(wait(2))\
@@ -437,6 +453,7 @@ class Auto(Node):
         
          
         # Creating and returning command
+        print("Auto Commands Created")
         return wait_until(lambda : self.position_updated and self.pivot_position_updated)\
                 .and_then(segment1)\
                 .and_then(wait(2))\
