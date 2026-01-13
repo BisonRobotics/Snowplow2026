@@ -2,7 +2,7 @@ import rclpy
 
 from rclpy.node import Node
 from std_msgs.msg import Float32, Int8
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist, Polygon, Point32 
 
 from control_pkg.commands import Runner, Command
 from control_pkg.drive_commands import DriveDistanceCommand, DriveToWaypointCommand, DriveBackwardsToWaypointCommand
@@ -17,16 +17,18 @@ class Auto(Node):
         # Set up ROS stuff
         self.pivot_position = None
         self.position = None
+        self.obsticals = None
         
         self.pivot_position_updated = False
         self.position_updated = False
+        self.obsticals_updated = False
         
         self.pivot_publisher = self.create_publisher(Int8, '/vehicle/pivot', 10)
         self.speed_publisher = self.create_publisher(Twist, '/cmd_vel', 10)
         
-        self.create_subscription(Twist, '/old_apriltag', self.update_position, 10)
+        self.create_subscription(Twist, '/apriltag', self.update_position, 10)
         self.create_subscription(Float32, '/sensor/pivot', self.update_pivot_position, 10)
-        
+        self.create_subscription(Polygon, '/obstacle_locations', self.update_obsticals, 10)
         # Start runner
         self.runner = Runner()
         self.create_timer(0.01, self.runner.run)
@@ -81,8 +83,19 @@ class Auto(Node):
         wait_until = lambda condition : WaitUntilCommand(condition)
 
         # Creating segments
-        ConeInternal = find_zone(1.5, 2) # Filler until we get Lidar Data.
-        ConeExternal = find_zone(1.5, 2) # Filler until we get Lidar Data.
+
+        ConeInternal  # Area the cone is located internally
+        ConeExternal  # Area the cone is located externally
+        
+        for point in self.obsticals.points:
+            x = point.x
+            y = point.y
+            zone = find_zone(x,y)
+            if(zone > 0):
+                ConeInternal = zone
+            elif(zone < 0):
+                ConeExternal = zone
+
         
         TurningAngle = 18.624 
 
@@ -531,6 +544,16 @@ class Auto(Node):
         """
         self.pivot_position_updated = True
         self.pivot_position = msg.data
+    
+    def update_obsticals(self, msg: Polygon) -> None:
+        """
+        Updates the obstical locations when a new message is heard
+
+        Args:
+            msg (Polygon): Message containing the new obstical locations
+        """
+        self.obsticals_updated = True
+        self.obsticals = msg.data
         
     def get_pivot_position(self) -> float:
         """
