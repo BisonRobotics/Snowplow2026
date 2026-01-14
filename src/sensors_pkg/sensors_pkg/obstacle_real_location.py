@@ -4,7 +4,7 @@ def location(robot_x,robot_y,robot_orientation,range,azimuth):
     obstacle_rel_x = range * math.cos(azimuth)
     obstacle_rel_y = range * math.sin(azimuth)
 
-    obstacle_abs_direction = robot_orientation - azimuth
+    obstacle_abs_direction = robot_orientation + (azimuth * 180 / math.pi)
     obstacle_distance = math.sqrt(obstacle_rel_x ** 2 + obstacle_rel_y ** 2)
     obstacle_x = robot_x + obstacle_distance* math.cos(obstacle_abs_direction * (math.pi/180))
     obstacle_y = robot_y + obstacle_distance * math.sin(obstacle_abs_direction * (math.pi/180))

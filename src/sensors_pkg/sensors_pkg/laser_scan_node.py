@@ -16,6 +16,7 @@ class LaserScanerNode(Node):
     def __init__(self):
         self.scan_data: LaserScan|None = None
         self.location_data: Location|None = None
+        self.scan_data = None
 
         super().__init__('laser_scanner_node')
 
@@ -73,7 +74,6 @@ class LaserScanerNode(Node):
                 output.points.append(point)
 
             self.scan_data = output
-            
 def polar_manipulation(scan_msg: LaserScan):
     angle_min = scan_msg.angle_min
     angle_max = scan_msg.angle_max

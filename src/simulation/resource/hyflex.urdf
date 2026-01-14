@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<robot name="hyflex">
+    <webots>
+        <plugin type="simulation.hyflex_driver.HyflexDriver" />
+    </webots>
+</robot>

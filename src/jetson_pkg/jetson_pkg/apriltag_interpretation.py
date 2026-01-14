@@ -7,3 +7,14 @@ def apriltag_interpretation(xa, ya, thetaa, xc, zc, thetac):
     xr = xa + math.cos(math.radians(thetaa) + math.radians(thetac)) * dist
     yr = ya + math.sin(math.radians(thetaa) + math.radians(thetac)) * dist
     return (xr, yr, (thetar * (180 / math.pi)) % 360)
+    
+
+''' - Commented out test code -
+    if __name__ == "__main__":
+    xr,yr,thetar = apriltag_interpretation(10,0,270,1,1.732,30)
+
+    # Verbose
+    print(f"xr: {xr}")
+    print(f"yr: {yr}")
+    print(f"thetar: {thetar}")
+'''
