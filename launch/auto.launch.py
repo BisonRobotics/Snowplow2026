@@ -28,7 +28,12 @@ def generate_launch_description():
         name='imu'
     )
 
-
+    #AprilTag detection node
+    start_apriltag_node = Node(
+        package='jetson_pkg',
+        executable='apriltag',
+        name='apriltag'
+    )
 
     #Declare launch description and populate
     ld = LaunchDescription()
@@ -36,5 +41,6 @@ def generate_launch_description():
     #declare launch actions
     ld.add_action(start_axle_manager_node)
     ld.add_action(start_auto_node)
+    ld.add_action(start_apriltag_node)
 
     return ld
