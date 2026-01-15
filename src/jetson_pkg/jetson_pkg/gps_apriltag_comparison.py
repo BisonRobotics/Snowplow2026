@@ -30,7 +30,6 @@ class coordinateComparison(Node):
             10
         )
 
-        #FIXME when you create the publisher for the gps
         self.gps_subscriber = self.create_subscription(
             Twist,
             '/gps_conversion',

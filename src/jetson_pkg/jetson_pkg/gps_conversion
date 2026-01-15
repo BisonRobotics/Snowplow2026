@@ -10,10 +10,6 @@ import threading
 import cv2
 
 
-
-
-
-
 class gpsConversion(Node):
     def __init__(self):
         super().__init__('gps_conversion')
@@ -45,7 +41,6 @@ class gpsConversion(Node):
 
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
-
     def gps_callback(self, msg: Vector3):
         self.latest_gps_pose = msg
 
@@ -57,7 +52,6 @@ class gpsConversion(Node):
         #how much the longitude changes from one unit change of X
         self.UnitX_Long = (self.rightCornerLongitude - self.leftCornerLongitude) / 16    
 
-    
     def coords_distance(self):
         #compares latitude and longitude of robot to (0,0) 
         self.deltaLatitude = self.latest_gps_pose.y - ((self.rightCornerLatitude + self.leftCornerLatitude) / 2)
@@ -94,7 +88,3 @@ def main(args=None):
     
 if __name__ == '__main__':
     main()     
-
-
-
-
