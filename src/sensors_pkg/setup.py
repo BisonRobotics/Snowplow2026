@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            "obs = sensors_pkg.laser_scan_node:main"
+            "obs = sensors_pkg.laser_scan_node:main",
+            "gps = sensors_pkg.gps_node:main"
         ],
     },
 )
