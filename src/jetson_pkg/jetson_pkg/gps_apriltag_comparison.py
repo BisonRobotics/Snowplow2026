@@ -33,7 +33,7 @@ class coordinateComparison(Node):
         #FIXME when you create the publisher for the gps
         self.gps_subscriber = self.create_subscription(
             Twist,
-            '/gps',
+            '/gps_conversion',
             self.gps_callback,
             10
         )
