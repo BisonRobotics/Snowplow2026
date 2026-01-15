@@ -1,7 +1,7 @@
 import rclpy
 from rclpy.node import Node
 
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist, Vector3
 from jetson_pkg.apriltag_interpretation import apriltag_interpretation
 
 import math
@@ -37,8 +37,8 @@ class gpsConversion(Node):
 
         #FIXME change to gps subscriber
         self.gps_subscriber = self.create_subscription(
-            Twist,
-            '/gps',
+            Vector3,
+            '/gps_data',
             self.gps_callback,
             10
         )
@@ -46,7 +46,7 @@ class gpsConversion(Node):
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
 
-    def gps_callback(self, msg: Twist):
+    def gps_callback(self, msg: Vector3):
         self.latest_gps_pose = msg
 
     def unitX_variables(self):
@@ -60,8 +60,8 @@ class gpsConversion(Node):
     
     def coords_distance(self, gps_coords: Twist):
         #compares latitude and longitude of robot to (0,0) 
-        self.deltaLatitude = gps_coords.linear - ((self.rightCornerLatitude + self.leftCornerLatitude) / 2)
-        self.deltaLongitude = gps_coords - ((self.rightCornerLongitude + self.leftCornerLongitude) / 2)
+        self.deltaLatitude = self.latest_gps_pose.y - ((self.rightCornerLatitude + self.leftCornerLatitude) / 2)
+        self.deltaLongitude = self.latest_gps_pose.x - ((self.rightCornerLongitude + self.leftCornerLongitude) / 2)
 
     def timer_callback(self):
         #converts our latitude and longitude change to our X and Y based off of our Units of X
