@@ -46,7 +46,7 @@ class coordinateComparison(Node):
     def gps_callback(self, msg: Twist):
         self.latest_gps_pose = msg
 
-    #compares the apriltag and gps and checks if they are within the valid range4
+    #compares the apriltag and gps and checks if they are within the valid range 4
     def coords_distance(self, apriltag_coords: Twist, gps_coords: Twist):
         apriltagX = apriltag_coords.linear.x
         apriltagY = apriltag_coords.linear.y
