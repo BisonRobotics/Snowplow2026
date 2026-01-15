@@ -9,7 +9,11 @@ import numpy as np
 import threading
 import cv2
 import apriltag
-
+poses = {
+    14: (0,3.71,270),
+    12: (-7.71,2,0),
+    17: (7.71, 2, 180)
+}
 class ApriltagPublisher(Node):
     def __init__(self):
         super().__init__('apriltag_publisher')
@@ -59,11 +63,12 @@ class ApriltagPublisher(Node):
             gray = cv2.cvtColor(self.latest_frame, cv2.COLOR_RGB2GRAY)
             detections = self.detector.detect(gray)
             if len(detections) > 0:
-                pose, _, _ = self.detector.detection_pose(detections[0], [self.fx, self.fy, self.cx, self.cy], 0.3254375)
+                pose, tag_id, _ = self.detector.detection_pose(detections[0], [self.fx, self.fy, self.cx, self.cy], 0.3254375)
                 relative_x = pose[0][3] + -0.017
                 relative_z = pose[2][3] + 0.83
                 relative_rotation = np.arcsin(-pose[2][0]) * (180 / math.pi)
-                xr, zr, thetar = apriltag_interpretation(0, 3.71, 270, relative_x, relative_z, relative_rotation)
+                tag_pose = poses[tag_id]
+                xr, zr, thetar = apriltag_interpretation(tag_pose[0], tag_pose[1], tag_pose[2], relative_x, relative_z, relative_rotation)
                 msg = Twist()
                 msg.linear.x = xr
                 msg.linear.z = zr
