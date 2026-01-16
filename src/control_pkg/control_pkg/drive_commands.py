@@ -31,7 +31,7 @@ class DriveTimeCommand(Command):
         self.drive(float(0))
 
 # measured in m/s
-top_speed = 1
+top_speed = 0.5
 # measured in m/s/s
 acceleration = 3
 deceleration = 1
