@@ -74,9 +74,9 @@ class Auto(Node):
         i = 1
         # This for loop generates the waypoints for the squares in the course.
         for waypoint in waypoint_array:
-            waypoint.linear.x = 2*(-(i%2)+0.5)*(5-((i+i%2)/2)) - (i%2) + 0.5
+            waypoint.linear.x = 2*(-(i%2)+0.5)*(5-((i+i%2)/2)) - ((-(i%2) + 0.5)*(2))
             waypoint.linear.z = 2
-            waypoint.angular.y = 90
+            waypoint.angular.y = (i%2)*180
             self.get_logger().info(f"Waypoint {i}, X: {waypoint.linear.x}, Z: {waypoint.linear.z}, Y: {waypoint.angular.y}")
             i += 1
         
@@ -225,7 +225,7 @@ class Auto(Node):
             
             
         # Segment 2 
-        if((external_cone == -7) and (internal_cone%2 == 1)):
+        if(internal_cone%2 == 1):
             #Path D Right
             self.get_logger().info("Path D Right Used")
             segment2 = turn_to_degrees(0)\
@@ -253,7 +253,7 @@ class Auto(Node):
                 .and_then(turn_to_degrees(0))\
                 .and_then(wait(2))\
                 .and_then(drive_distance(-1, 1.5))
-        elif((external_cone == -1) and (internal_cone%2 == 0)):
+        else:
           # Path D Left
             self.get_logger().info("Path D Left Used")
             segment2 = turn_to_degrees(0)\
@@ -281,79 +281,6 @@ class Auto(Node):
                 .and_then(turn_to_degrees(0))\
                 .and_then(wait(2))\
                 .and_then(drive_distance(-1, 1.5))
-        else:
-           if(internal_cone%2 == 1):
-               # Path C Right
-                self.get_logger().info("Path C Right Used")
-                segment2 = turn_to_degrees(0)\
-                    .and_then(wait(2))\
-                    .and_then(drive_to_waypoint(waypoint8))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))\
-                    .and_then(wait(2))\
-                    .and_then(drive_backwards_to_waypoint(garage_waypoint))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))\
-                    .and_then(wait(2))\
-                    .and_then(drive_to_waypoint(waypoint6))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))\
-                    .and_then(wait(2))\
-                    .and_then(drive_backwards_to_waypoint(garage_waypoint))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))\
-                    .and_then(wait(2))\
-                    .and_then(drive_to_waypoint(waypoint4))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))\
-                    .and_then(wait(2))\
-                    .and_then(drive_backwards_to_waypoint(garage_waypoint))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))\
-                    .and_then(wait(2))\
-                    .and_then(drive_to_waypoint(waypoint2))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))\
-                    .and_then(wait(2))\
-                    .and_then(drive_backwards_to_waypoint(garage_waypoint))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))
-           else:
-               # Path C Left
-                self.get_logger().info("Path C Left Used")   
-                segment2 = turn_to_degrees(0)\
-                    .and_then(wait(2))\
-                    .and_then(drive_to_waypoint(waypoint7))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))\
-                    .and_then(wait(2))\
-                    .and_then(drive_backwards_to_waypoint(garage_waypoint))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))\
-                    .and_then(wait(2))\
-                    .and_then(drive_to_waypoint(waypoint5))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))\
-                    .and_then(wait(2))\
-                    .and_then(drive_backwards_to_waypoint(garage_waypoint))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))\
-                    .and_then(wait(2))\
-                    .and_then(drive_to_waypoint(waypoint3))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))\
-                    .and_then(wait(2))\
-                    .and_then(drive_backwards_to_waypoint(garage_waypoint))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))\
-                    .and_then(wait(2))\
-                    .and_then(drive_to_waypoint(waypoint1))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))\
-                    .and_then(wait(2))\
-                    .and_then(drive_backwards_to_waypoint(garage_waypoint))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))
         
         #Segment 3
         if((external_cone == -1 and internal_cone%2 == 1) or (external_cone == -7 and internal_cone%2 == 0)):
@@ -366,116 +293,164 @@ class Auto(Node):
             leaving out the square where the cone is located.
             '''
             segment3 = wait(2)
-            if(not(internal_cone == 8)):
-                # Path C.1 Right
-                self.get_logger().info("Segment 3 Path C.1 Right Used")
+            if(internal_cone == 8):
+                # Path D.1 Right
+                self.get_logger().info("Segment 3 Path D.1 Right Used")
                 segment3 = segment3\
-                    .and_then(turn_to_degrees(0))\
-                    .and_then(wait(2))\
-                    .and_then(drive_to_waypoint(waypoint8))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))\
-                    .and_then(wait(2))\
-                    .and_then(drive_backwards_to_waypoint(garage_waypoint))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))
-            if(not(internal_cone == 6)):
-                # Path C.2 Right
-                self.get_logger().info("Segment 3 Path C.2 Right Used")
+                .and_then(turn_to_degrees(0))\
+                .and_then(wait(2))\
+                .and_then(drive_to_waypoint(waypoint8))\
+                .and_then(wait(2))\
+                .and_then(turn_to_degrees(0))\
+                .and_then(wait(2))\
+                .and_then(drive_distance(-1, 1.5))\
+                .and_then(wait(2))\
+                .and_then(turn_to_degrees(18.624))\
+                .and_then(wait(2))\
+                .and_then(drive_distance(-1, 2.25 * 3.14 / 2))\
+                .and_then(wait(2))\
+                .and_then(turn_to_degrees(0))\
+                .and_then(wait(2))\
+                .and_then(drive_distance(-1, 1.5))
+            if(internal_cone == 6):
+                # Path D.2 Right
+                self.get_logger().info("Segment 3 Path D.2 Right Used")
                 segment3 = segment3\
-                    .and_then(turn_to_degrees(0))\
-                    .and_then(wait(2))\
-                    .and_then(drive_to_waypoint(waypoint6))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))\
-                    .and_then(wait(2))\
-                    .and_then(drive_backwards_to_waypoint(garage_waypoint))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))
-            if(not(internal_cone == 4)):
-                # Path C.3 Right
-                self.get_logger().info("Segment 3 Path C.3 Right Used")
+                .and_then(turn_to_degrees(0))\
+                .and_then(wait(2))\
+                .and_then(drive_to_waypoint(waypoint6))\
+                .and_then(wait(2))\
+                .and_then(turn_to_degrees(0))\
+                .and_then(wait(2))\
+                .and_then(drive_distance(-1, 1.5))\
+                .and_then(wait(2))\
+                .and_then(turn_to_degrees(18.624))\
+                .and_then(wait(2))\
+                .and_then(drive_distance(-1, 2.25 * 3.14 / 2))\
+                .and_then(wait(2))\
+                .and_then(turn_to_degrees(0))\
+                .and_then(wait(2))\
+                .and_then(drive_distance(-1, 1.5))
+            if(internal_cone == 4):
+                # Path D.3 Right
+                self.get_logger().info("Segment 3 Path D.3 Right Used")
                 segment3 = segment3\
-                    .and_then(turn_to_degrees(0))\
-                    .and_then(wait(2))\
-                    .and_then(drive_to_waypoint(waypoint4))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))\
-                    .and_then(wait(2))\
-                    .and_then(drive_backwards_to_waypoint(garage_waypoint))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))
-            if(not(internal_cone == 2)):
-                # Path C.4 Right
-                self.get_logger().info("Segment 3 Path C.4 Right Used")
+                .and_then(turn_to_degrees(0))\
+                .and_then(wait(2))\
+                .and_then(drive_to_waypoint(waypoint4))\
+                .and_then(wait(2))\
+                .and_then(turn_to_degrees(0))\
+                .and_then(wait(2))\
+                .and_then(drive_distance(-1, 1.5))\
+                .and_then(wait(2))\
+                .and_then(turn_to_degrees(18.624))\
+                .and_then(wait(2))\
+                .and_then(drive_distance(-1, 2.25 * 3.14 / 2))\
+                .and_then(wait(2))\
+                .and_then(turn_to_degrees(0))\
+                .and_then(wait(2))\
+                .and_then(drive_distance(-1, 1.5))
+            if(internal_cone == 2):
+                # Path D.4 Right
+                self.get_logger().info("Segment 3 Path D.4 Right Used")
                 segment3 = segment3\
-                    .and_then(turn_to_degrees(0))\
-                    .and_then(wait(2))\
-                    .and_then(drive_to_waypoint(waypoint2))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))\
-                    .and_then(wait(2))\
-                    .and_then(drive_backwards_to_waypoint(garage_waypoint))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))
+                .and_then(turn_to_degrees(0))\
+                .and_then(wait(2))\
+                .and_then(drive_to_waypoint(waypoint2))\
+                .and_then(wait(2))\
+                .and_then(turn_to_degrees(0))\
+                .and_then(wait(2))\
+                .and_then(drive_distance(-1, 1.5))\
+                .and_then(wait(2))\
+                .and_then(turn_to_degrees(18.624))\
+                .and_then(wait(2))\
+                .and_then(drive_distance(-1, 2.25 * 3.14 / 2))\
+                .and_then(wait(2))\
+                .and_then(turn_to_degrees(0))\
+                .and_then(wait(2))\
+                .and_then(drive_distance(-1, 1.5))
         else:
             '''
             This code will build segment 3 with each path, 
             leaving out the square where the cone is located.
             '''
             segment3 = wait(2)
-            if(not(internal_cone == 7)):
-                # Path C.1 Left
-                self.get_logger().info("Segment 3 Path C.1 Left Used")
+            if(internal_cone == 7):
+                # Path D.1 Left
+                self.get_logger().info("Segment 3 Path D.1 Left Used")
                 segment3 = segment3\
-                    .and_then(turn_to_degrees(0))\
-                    .and_then(wait(2))\
-                    .and_then(drive_to_waypoint(waypoint7))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))\
-                    .and_then(wait(2))\
-                    .and_then(drive_backwards_to_waypoint(garage_waypoint))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))
-            if(not(internal_cone == 5)):
-                # Path C.2 Left
-                self.get_logger().info("Segment 3 Path C.2 Left Used")
+                .and_then(turn_to_degrees(0))\
+                .and_then(wait(2))\
+                .and_then(drive_to_waypoint(waypoint7))\
+                .and_then(wait(2))\
+                .and_then(turn_to_degrees(0))\
+                .and_then(wait(2))\
+                .and_then(drive_distance(-1, 1.5))\
+                .and_then(wait(2))\
+                .and_then(turn_to_degrees(-18.624))\
+                .and_then(wait(2))\
+                .and_then(drive_distance(-1, 2.25 * 3.14 / 2))\
+                .and_then(wait(2))\
+                .and_then(turn_to_degrees(0))\
+                .and_then(wait(2))\
+                .and_then(drive_distance(-1, 1.5))
+            if(internal_cone == 5):
+                # Path D.2 Left
+                self.get_logger().info("Segment 3 Path D.2 Left Used")
                 segment3 = segment3\
-                    .and_then(turn_to_degrees(0))\
-                    .and_then(wait(2))\
-                    .and_then(drive_to_waypoint(waypoint5))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))\
-                    .and_then(wait(2))\
-                    .and_then(drive_backwards_to_waypoint(garage_waypoint))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))
-            if(not(internal_cone == 3)):
-                # Path C.3 Left
-                self.get_logger().info("Segment 3 Path C.3 Left Used")
+                .and_then(turn_to_degrees(0))\
+                .and_then(wait(2))\
+                .and_then(drive_to_waypoint(waypoint7))\
+                .and_then(wait(2))\
+                .and_then(turn_to_degrees(0))\
+                .and_then(wait(2))\
+                .and_then(drive_distance(-1, 1.5))\
+                .and_then(wait(2))\
+                .and_then(turn_to_degrees(-18.624))\
+                .and_then(wait(2))\
+                .and_then(drive_distance(-1, 2.25 * 3.14 / 2))\
+                .and_then(wait(2))\
+                .and_then(turn_to_degrees(0))\
+                .and_then(wait(2))\
+                .and_then(drive_distance(-1, 1.5))
+            if(internal_cone == 3):
+                # Path D.3 Left
+                self.get_logger().info("Segment 3 Path D.3 Left Used")
                 segment3 = segment3\
-                    .and_then(turn_to_degrees(0))\
-                    .and_then(wait(2))\
-                    .and_then(drive_to_waypoint(waypoint3))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))\
-                    .and_then(wait(2))\
-                    .and_then(drive_backwards_to_waypoint(garage_waypoint))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))
-            if(not(internal_cone == 1)):
-                # Path C.4 Left
-                self.get_logger().info("Segment 3 Path C.4 Left Used")
+                .and_then(turn_to_degrees(0))\
+                .and_then(wait(2))\
+                .and_then(drive_to_waypoint(waypoint7))\
+                .and_then(wait(2))\
+                .and_then(turn_to_degrees(0))\
+                .and_then(wait(2))\
+                .and_then(drive_distance(-1, 1.5))\
+                .and_then(wait(2))\
+                .and_then(turn_to_degrees(-18.624))\
+                .and_then(wait(2))\
+                .and_then(drive_distance(-1, 2.25 * 3.14 / 2))\
+                .and_then(wait(2))\
+                .and_then(turn_to_degrees(0))\
+                .and_then(wait(2))\
+                .and_then(drive_distance(-1, 1.5))
+            if(internal_cone == 1):
+                # Path D.4 Left
+                self.get_logger().info("Segment 3 Path D.4 Left Used")
                 segment3 = segment3\
-                    .and_then(turn_to_degrees(0))\
-                    .and_then(wait(2))\
-                    .and_then(drive_to_waypoint(waypoint1))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))\
-                    .and_then(wait(2))\
-                    .and_then(drive_backwards_to_waypoint(garage_waypoint))\
-                    .and_then(wait(2))\
-                    .and_then(turn_to_degrees(0))
+                .and_then(turn_to_degrees(0))\
+                .and_then(wait(2))\
+                .and_then(drive_to_waypoint(waypoint7))\
+                .and_then(wait(2))\
+                .and_then(turn_to_degrees(0))\
+                .and_then(wait(2))\
+                .and_then(drive_distance(-1, 1.5))\
+                .and_then(wait(2))\
+                .and_then(turn_to_degrees(-18.624))\
+                .and_then(wait(2))\
+                .and_then(drive_distance(-1, 2.25 * 3.14 / 2))\
+                .and_then(wait(2))\
+                .and_then(turn_to_degrees(0))\
+                .and_then(wait(2))\
+                .and_then(drive_distance(-1, 1.5))
 
 
         
