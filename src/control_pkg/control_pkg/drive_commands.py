@@ -32,6 +32,8 @@ class DriveTimeCommand(Command):
 
 # measured in m/s
 TOP_SPEED = 0.5
+ACCELERATION_RATE = 1.5
+DECELERATION_RATE = 1
         
 class DriveDistanceCommand(DriveTimeCommand):
     """
@@ -40,14 +42,17 @@ class DriveDistanceCommand(DriveTimeCommand):
     def __init__(self, speed: float, distance: float, drive: Callable[[float], None]):
         super().__init__(speed=speed, drive_time=self.calculate_time(speed, distance), drive=drive)
         
-    def calculate_time(self, speed, distance) -> float:
+    def calculate_time(self, speed: float, distance: float) -> float:
         real_speed = abs(speed) * TOP_SPEED
                 
-        if distance < real_speed:
-            return sqrt((distance / real_speed))
+        acceleration_time = real_speed / ACCELERATION_RATE
+        deceleration_time = real_speed / DECELERATION_RATE
         
-        # Time to hold in place
-        return distance / real_speed
+        if distance < real_speed * (acceleration_time + deceleration_time) / 2:
+            return sqrt((2 * distance * ACCELERATION_RATE * DECELERATION_RATE) / (ACCELERATION_RATE + DECELERATION_RATE)) / ACCELERATION_RATE
+        
+        hold_time = ((2 * distance / real_speed) - acceleration_time - deceleration_time) / 2
+        return acceleration_time + hold_time
 
 max_turn = 18.25
 

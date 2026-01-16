@@ -20,7 +20,7 @@ class Hdc2460Node(Node):
                 ('rightChannel',2),
                 ('maxSpeed',250), #Max Pulses per Second (500 ~ 1 meter/second) #500 (changed 12/8/2025)
                 ('accelRate',2500), #0.1 * RPM/s #31860 (changed 12/8/2025)
-                ('brakeRate',2500), #0.1 * RPM/s #10620 (changed 12/8/2025)
+                ('brakeRate',5000), #0.1 * RPM/s #10620 (changed 12/8/2025)
                 ('pivotDevice',"FAC"),
                 ('pivotExtendChannel',1),
                 ('pivotRetractChannel',2),
