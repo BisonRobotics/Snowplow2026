@@ -31,10 +31,7 @@ class DriveTimeCommand(Command):
         self.drive(float(0))
 
 # measured in m/s
-top_speed = 0.5 #1 (changed 12/8/2025)
-# measured in m/s/s
-#acceleration = #3 (changed 12/10/2025)
-#deceleration = #1 (changed 12/10/2025)
+TOP_SPEED = 0.5
         
 class DriveDistanceCommand(DriveTimeCommand):
     """
@@ -44,18 +41,13 @@ class DriveDistanceCommand(DriveTimeCommand):
         super().__init__(speed=speed, drive_time=self.calculate_time(speed, distance), drive=drive)
         
     def calculate_time(self, speed, distance) -> float:
-        real_speed = abs(speed) * top_speed
+        real_speed = abs(speed) * TOP_SPEED
+                
+        if distance < real_speed:
+            return sqrt((distance / real_speed))
         
-        acceleration_time = 1 #real_speed / acceleration (changed 12/10/2025)
-        acceleration = real_speed / acceleration_time
-        deceleration_time = 1 #real_speed / deceleration (changed 12/10/2025)
-        deceleration = real_speed / deceleration_time
-        
-        if distance < real_speed * (acceleration_time + deceleration_time) / 2:
-            return sqrt((2 * distance * acceleration * deceleration) / (acceleration + deceleration)) / acceleration
-        
-        hold_time = ((2 * distance / real_speed) - acceleration_time - deceleration_time) / 2
-        return acceleration_time + hold_time
+        # Time to hold in place
+        return distance / real_speed
 
 max_turn = 18.25
 
@@ -79,21 +71,21 @@ class DriveToWaypointCommand(SequentialCommandGroup):
         path_segment_1.add_commands(
             TurnToDegreesCommand(path[0] * 18.624, self.get_pivot_position, self.drive_pivot),
             WaitCommand(2),
-            DriveDistanceCommand(top_speed * path[1], path[2], self.drive)
+            DriveDistanceCommand(TOP_SPEED * path[1], path[2], self.drive)
         )
         
         path_segment_2 = SequentialCommandGroup()
         path_segment_2.add_commands(
             TurnToDegreesCommand(path[3] * 18.624, self.get_pivot_position, self.drive_pivot),
             WaitCommand(2),
-            DriveDistanceCommand(top_speed * path[4], path[5], self.drive)
+            DriveDistanceCommand(TOP_SPEED * path[4], path[5], self.drive)
         )
         
         path_segment_3 = SequentialCommandGroup()
         path_segment_3.add_commands(
             TurnToDegreesCommand(path[6] * 18.624, self.get_pivot_position, self.drive_pivot),
             WaitCommand(2),
-            DriveDistanceCommand(top_speed * path[7], path[8], self.drive)
+            DriveDistanceCommand(TOP_SPEED * path[7], path[8], self.drive)
         )
         
         needed_segments: list[SequentialCommandGroup] = []
