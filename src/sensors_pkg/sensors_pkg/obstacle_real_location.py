@@ -1,6 +1,6 @@
 import math
 
-def location(robot_x,robot_y,robot_orientation,range,azimuth):
+def location(robot_x: float, robot_y: float, robot_orientation: float, range: float, azimuth: float) -> tuple[float, float]:
     obstacle_rel_x = range * math.cos(azimuth)
     obstacle_rel_y = range * math.sin(azimuth)
 
