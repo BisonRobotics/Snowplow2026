@@ -18,9 +18,9 @@ class Hdc2460Node(Node):
                 ('serialBitRate',115200),
                 ('leftChannel',1),
                 ('rightChannel',2),
-                ('maxSpeed',500),
-                ('accelRate',31860),
-                ('brakeRate',10620),
+                ('maxSpeed',250), #Max Pulses per Second (500 ~ 1 meter/second) #500 (changed 12/8/2025)
+                ('accelRate',2500), #0.1 * RPM/s #31860 (changed 12/8/2025)
+                ('brakeRate',5000), #0.1 * RPM/s #10620 (changed 12/8/2025)
                 ('pivotDevice',"FAC"),
                 ('pivotExtendChannel',1),
                 ('pivotRetractChannel',2),
@@ -50,11 +50,11 @@ class Hdc2460Node(Node):
         rightChannel_param = self.get_parameter('rightChannel').value
         rightChannel = int(rightChannel_param) if rightChannel_param is not None else 2
         maxSpeed_param = self.get_parameter('maxSpeed').value
-        maxSpeed = int(maxSpeed_param) if maxSpeed_param is not None else 500
+        maxSpeed = int(maxSpeed_param) if maxSpeed_param is not None else 250 #500 (changed 12/8/2025)
         accelRate_param = self.get_parameter('accelRate').value
-        accelRate = int(accelRate_param) if accelRate_param is not None else 31860
+        accelRate = int(accelRate_param) if accelRate_param is not None else 15930 #31860 (changed 12/8/2025)
         brakeRate_param = self.get_parameter('brakeRate').value
-        brakeRate = int(brakeRate_param) if brakeRate_param is not None else 10620
+        brakeRate = int(brakeRate_param) if brakeRate_param is not None else 5310 #10620 (changed 12/8/2025)
         self.pivotDevice = str(self.get_parameter('pivotDevice').value)
         pivotLeft_param = self.get_parameter('pivotExtendChannel').value
         self.pivotLeft = int(pivotLeft_param) if pivotLeft_param is not None else 1
