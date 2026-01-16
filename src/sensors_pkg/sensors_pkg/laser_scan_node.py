@@ -2,8 +2,7 @@ import rclpy
 from rclpy.node import Node
 
 from sensor_msgs.msg import LaserScan
-from geometry_msgs.msg import Polygon, Point32
-from custom_msgs.msg import Location
+from geometry_msgs.msg import Polygon, Point, Point32
 
 import numpy as np
 
@@ -14,11 +13,10 @@ from .obstacle_real_location import location
 class LaserScanerNode(Node):
 
     def __init__(self):
-        self.scan_data: LaserScan|None = None
-        self.location_data: Location|None = None
-        self.scan_data = None
+        self.location_data: Point | None = None
 
         super().__init__('laser_scanner_node')
+        self.get_logger().info("Starting Laser Scan Node")
 
         self.pub = self.create_publisher(
             Polygon,
@@ -27,7 +25,7 @@ class LaserScanerNode(Node):
         )
 
         self.location_sub = self.create_subscription(
-            Location,
+            Point,
             '/location_calculate',
             self.location_callback,
             10
@@ -40,40 +38,43 @@ class LaserScanerNode(Node):
             10
         )
 
-        self.timer = self.create_timer(0.1, self.timer_callback)
-
-    def timer_callback(self):
-        # publish converted data
-        if self.scan_data:
-            self.pub.publish(self.scan_data)
-
-    def location_callback(self, msg: Location):
+    def location_callback(self, msg: Point):
         self.location_data = msg
         
     def scan_callback(self, msg: LaserScan):
-        # get init data
-        # if not self.scan_data and self.location_data:
-        if not self.scan_data:
-            msg = polar_manipulation(msg)
-            msg = find_minima(msg)
-            
-            #add in pathplanning for obs x and y
-            locations = [
-                location(self.location_data.x, self.location_data.y, self.location_data.orientation, range, azimuth) for range, azimuth in msg
-            ] 
-            locations = filter_polar(locations)
-            
-            output = Polygon()
+        self.get_logger().info("Receive scanned data")
 
-            for x, y in locations:
-                point = Point32()
+        if self.location_data is None:
+            return
+        
+        self.get_logger().info(f"Current Location: x={self.location_data.x}, y={self.location_data.y}, z={self.location_data.z}")
 
-                point.x = x
-                point.y = y
+        msg = polar_manipulation(msg)
+        self.get_logger().info(f"Total scan points received: {len(msg)}")
+        msg = find_minima(msg)
+        
+        self.get_logger().info(f"Total minima found: {len(msg)}")
+        #add in pathplanning for obs x and y
+        locations = [
+            location(self.location_data.x, self.location_data.y, self.location_data.z, range, azimuth) for range, azimuth in msg
+        ] 
+        self.get_logger().info(f"Total obstacle locations calculated: {len(locations)}")
+        locations = filter_polar(locations)
+        
+        output = Polygon()
 
-                output.points.append(point)
+        self.get_logger().info(f"Publishing {len(locations)} obstacle locations")
 
-            self.scan_data = output
+        for x, y in locations:
+            point = Point32()
+
+            point.x = x
+            point.y = y
+
+            output.points.append(point)
+
+        self.pub.publish(output)
+
 def polar_manipulation(scan_msg: LaserScan):
     angle_min = scan_msg.angle_min
     angle_max = scan_msg.angle_max
@@ -98,8 +99,6 @@ def main(args=None):
     # when the garbage collector destroys the node object)
     laser_scanner_node.destroy_node()
     rclpy.shutdown()
-
-
 
 
 if __name__== '__main__':

@@ -2,17 +2,15 @@ import rclpy
 from rclpy.node import Node
 
 from .wheel_odometry_interpret import update_odometry
-from geometry_msgs.msg import Vector3
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist, Point
 from sensor_msgs.msg import Imu
-from custom_msgs.msg import Location
 import math
 
 
-class Location_Calculate(Node):
+class LocationCalculate(Node):
     def __init__(self):
         super().__init__('location_calculate_publisher')
-        self.publisher_ = self.create_publisher(Location, '/location_calculate', 10)
+        self.publisher_ = self.create_publisher(Point, '/location_calculate', 10)
 
         
         #start publisher callback with timer
@@ -30,7 +28,7 @@ class Location_Calculate(Node):
         self.time_imu = 0.0
 
         #start IMU subscriber
-        self.IMU_subscription = self.create_subscription(Imu , 'interpreted_imu',self.sub_callback_IMU, 10)
+        self.create_subscription(Imu , 'interpreted_imu', self.sub_callback_IMU, 10)
     
         #initialize april tag data
         self.x_april = 0.0
@@ -39,7 +37,7 @@ class Location_Calculate(Node):
         self.time_april = 0.0
 
         #start april tag subscriber
-        self.april_tag_subscription = self.create_subscription(Twist, '/apriltag', self.sub_callback_april, 10)
+        self.create_subscription(Twist, '/apriltag', self.sub_callback_april, 10)
 
 
         #inintialize wheel odometry data
@@ -48,11 +46,12 @@ class Location_Calculate(Node):
         self.time_wheel_odom = 0.0
 
         #start wheel speed subscription
-        self.wheel_speed_subscription = self.create_subscription(Twist , '/wheel/speed', self.sub_callback_odom, 10)
+        self.create_subscription(Twist , '/wheel/speed', self.sub_callback_odom, 10)
     
 
 
     def sub_callback_IMU(self, msg:Imu):
+        self.get_logger().info("Get IMU data")
 
         #set equal to published imu data
         self.x_imu = msg.orientation.x
@@ -67,6 +66,7 @@ class Location_Calculate(Node):
         self.time_imu = self.time
 
     def sub_callback_april(self, msg:Twist):
+        self.get_logger().info("Get apriltag data")
 
         #set equal to published april tag data
         self.x_april = msg.linear.x
@@ -77,6 +77,8 @@ class Location_Calculate(Node):
         self.time_april = self.time
 
     def sub_callback_odom(self , msg:Twist):
+        self.get_logger().info("Get odom data")
+
         #subscriber callback for wheel odometry
         #Set wheel speed in RPM for left and right wheels
         self.left_speed = msg.linear.x
@@ -90,10 +92,8 @@ class Location_Calculate(Node):
 
         #set wheel odometry data
         #make publisher in hdc2460_node
-        
-        
 
-         #test to see which data method to use. first april tag, then IMU, then wheel odometry
+        #test to see which data method to use. first april tag, then IMU, then wheel odometry
         if self.time_april > self.time - 0.2:
             self.location_x = self.x_april
             self.location_y = self.y_april
@@ -135,22 +135,21 @@ class Location_Calculate(Node):
                 #updates orientation
                 self.orientation = (self.orientation + change_orientation) % 360
 
-        msg = Location()
+        msg = Point()
 
         #update "true" location
         msg.x = self.location_x
         msg.y = self.location_y
-        msg.orientation = self.orientation
+        msg.z = self.orientation
     
-
+        self.get_logger().info("Publishing location calculate")
         self.publisher_.publish(msg)
-        # self.get_logger().info()
 
 
 def main(args=None):
     rclpy.init(args=args)
 
-    location_calculate_node = Location_Calculate()
+    location_calculate_node = LocationCalculate()
 
     rclpy.spin(location_calculate_node)
 
