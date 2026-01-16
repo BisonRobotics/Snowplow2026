@@ -28,7 +28,19 @@ def generate_launch_description():
         name='imu'
     )
 
-
+    #AprilTag detection node
+    start_apriltag_node = Node(
+        package='jetson_pkg',
+        executable='apriltag',
+        name='apriltag',
+        parameters=[
+            {'cap':'rtsp://admin:hyflex@192.168.1.131:80/cam/realmonitor?channel=1&subtype=0'},
+            {'fx':1071.1362274102335},
+            {'fy':1102.1406887400624},
+            {'cx':953.030188084331},
+            {'cy':468.0382502048589}
+        ]
+    )
 
     #Declare launch description and populate
     ld = LaunchDescription()
@@ -36,5 +48,6 @@ def generate_launch_description():
     #declare launch actions
     ld.add_action(start_axle_manager_node)
     ld.add_action(start_auto_node)
+    ld.add_action(start_apriltag_node)
 
     return ld

@@ -13,9 +13,9 @@ sudo apt update
 sudo apt install ros-dev-tools
 sudo apt update
 sudo apt upgrade
-sudo apt install ros-iron-ros-base
-source /opt/ros/iron/setup.bash
-echo "source /opt/ros/iron/setup.bash" >> ~/.bashrc
+sudo apt install ros-jazzy-ros-base
+source /opt/ros/jazzy/setup.bash
+echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
 echo "export ROS_DOMAIN_ID=42" >> ~/.bashrc
-sudo apt install python3-colcon-common-extensions python3-pip ros-iron-joy-linux
+sudo apt install python3-colcon-common-extensions python3-pip ros-jazzy-joy-linux
 pip install setuptools==58.2.0 serial
