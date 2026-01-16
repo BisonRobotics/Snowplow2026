@@ -139,9 +139,9 @@ class Auto(Node):
                     .and_then(wait(1))\
                     .and_then(turn_to_degrees(0))\
                     .and_then(wait(1))\
-                    .and_then(drive_distance(1, 2.75))\
+                    .and_then(drive_distance(1, 2.5))\
                     .and_then(wait(1))\
-                    .and_then(drive_distance(-1, 2.75))\
+                    .and_then(drive_distance(-1, 2.5))\
                     .and_then(wait(1))\
                     .and_then(turn_to_degrees(-turning_angle))\
                     .and_then(wait(1))\
@@ -161,9 +161,9 @@ class Auto(Node):
                     .and_then(wait(1))\
                     .and_then(turn_to_degrees(0))\
                     .and_then(wait(1))\
-                    .and_then(drive_distance(1, 2.75))\
+                    .and_then(drive_distance(1, 2.5))\
                     .and_then(wait(1))\
-                    .and_then(drive_distance(-1, 2.75))\
+                    .and_then(drive_distance(-1, 2.5))\
                     .and_then(wait(1))\
                     .and_then(turn_to_degrees(turning_angle))\
                     .and_then(wait(1))\
@@ -187,9 +187,9 @@ class Auto(Node):
                     .and_then(wait(2))\
                     .and_then(turn_to_degrees(0))\
                     .and_then(wait(2))\
-                    .and_then(drive_distance(1, 2.75))\
+                    .and_then(drive_distance(1, 2.5))\
                     .and_then(wait(2))\
-                    .and_then(drive_distance(-1, 2.75))\
+                    .and_then(drive_distance(-1, 2.5))\
                     .and_then(wait(2))\
                     .and_then(turn_to_degrees(-turning_angle))\
                     .and_then(wait(2))\
@@ -211,9 +211,9 @@ class Auto(Node):
                     .and_then(wait(2))\
                     .and_then(turn_to_degrees(0))\
                     .and_then(wait(2))\
-                    .and_then(drive_distance(1, 2.75))\
+                    .and_then(drive_distance(1, 2.5))\
                     .and_then(wait(2))\
-                    .and_then(drive_distance(-1, 2.75))\
+                    .and_then(drive_distance(-1, 2.5))\
                     .and_then(wait(2))\
                     .and_then(turn_to_degrees(turning_angle))\
                     .and_then(wait(2))\
@@ -303,7 +303,7 @@ class Auto(Node):
                 .and_then(wait(2))\
                 .and_then(turn_to_degrees(0))\
                 .and_then(wait(2))\
-                .and_then(drive_distance(-1, 1.5))\
+                .and_then(drive_distance(-1, 0))\
                 .and_then(wait(2))\
                 .and_then(turn_to_degrees(18.624))\
                 .and_then(wait(2))\
@@ -322,7 +322,7 @@ class Auto(Node):
                 .and_then(wait(2))\
                 .and_then(turn_to_degrees(0))\
                 .and_then(wait(2))\
-                .and_then(drive_distance(-1, 1.5))\
+                .and_then(drive_distance(-1, 0))\
                 .and_then(wait(2))\
                 .and_then(turn_to_degrees(18.624))\
                 .and_then(wait(2))\
@@ -341,7 +341,7 @@ class Auto(Node):
                 .and_then(wait(2))\
                 .and_then(turn_to_degrees(0))\
                 .and_then(wait(2))\
-                .and_then(drive_distance(-1, 1.5))\
+                .and_then(drive_distance(-1, 1))\
                 .and_then(wait(2))\
                 .and_then(turn_to_degrees(18.624))\
                 .and_then(wait(2))\
@@ -360,7 +360,7 @@ class Auto(Node):
                 .and_then(wait(2))\
                 .and_then(turn_to_degrees(0))\
                 .and_then(wait(2))\
-                .and_then(drive_distance(-1, 1.5))\
+                .and_then(drive_distance(-1, 2))\
                 .and_then(wait(2))\
                 .and_then(turn_to_degrees(18.624))\
                 .and_then(wait(2))\
@@ -385,7 +385,7 @@ class Auto(Node):
                 .and_then(wait(2))\
                 .and_then(turn_to_degrees(0))\
                 .and_then(wait(2))\
-                .and_then(drive_distance(-1, 1.5))\
+                .and_then(drive_distance(-1, 0))\
                 .and_then(wait(2))\
                 .and_then(turn_to_degrees(-18.624))\
                 .and_then(wait(2))\
@@ -404,7 +404,7 @@ class Auto(Node):
                 .and_then(wait(2))\
                 .and_then(turn_to_degrees(0))\
                 .and_then(wait(2))\
-                .and_then(drive_distance(-1, 1.5))\
+                .and_then(drive_distance(-1, 0))\
                 .and_then(wait(2))\
                 .and_then(turn_to_degrees(-18.624))\
                 .and_then(wait(2))\
@@ -423,7 +423,7 @@ class Auto(Node):
                 .and_then(wait(2))\
                 .and_then(turn_to_degrees(0))\
                 .and_then(wait(2))\
-                .and_then(drive_distance(-1, 1.5))\
+                .and_then(drive_distance(-1, 1))\
                 .and_then(wait(2))\
                 .and_then(turn_to_degrees(-18.624))\
                 .and_then(wait(2))\
@@ -442,7 +442,7 @@ class Auto(Node):
                 .and_then(wait(2))\
                 .and_then(turn_to_degrees(0))\
                 .and_then(wait(2))\
-                .and_then(drive_distance(-1, 1.5))\
+                .and_then(drive_distance(-1, 2))\
                 .and_then(wait(2))\
                 .and_then(turn_to_degrees(-18.624))\
                 .and_then(wait(2))\
