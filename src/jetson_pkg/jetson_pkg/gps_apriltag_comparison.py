@@ -50,8 +50,13 @@ class coordinateComparison(Node):
         apriltagX = apriltag_coords.linear.x
         apriltagY = apriltag_coords.linear.y
 
-        gpsX = gps_coords.linear.x
-        gpsY = gps_coords.linear.y
+        
+        gpsX = gps_coords.linear.x - math.cos(apriltag_coords.angular.y) * 0.39
+        gpsY = gps_coords.linear.y - math.sin(apriltag_coords.angular.y) * 0.39
+
+
+
+
 
         #turns the x and y into a circle
         distance = math.sqrt((apriltagX - gpsX)**2 + (apriltagY - gpsY)**2)

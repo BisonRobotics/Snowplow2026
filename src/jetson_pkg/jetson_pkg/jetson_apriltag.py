@@ -78,6 +78,7 @@ class ApriltagPublisher(Node):
                 msg_no_offset.linear.x = relative_x
                 msg_no_offset.linear.z = relative_z
                 msg_no_offset.linear.y = relative_y
+                msg_no_offset.angular.y = thetar
                 
                 self.get_logger().debug(f'{msg_no_offset}')
                 self.publisher_.publish(msg_no_offset)
