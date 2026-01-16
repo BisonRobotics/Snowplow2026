@@ -13,6 +13,9 @@ def direction(start_point, end_point):
         return math.pi if change[0] < 0 else 0
     return math.pi + math.atan(change[1] / change[0]) if change[0] < 0 else math.atan(change[1] / change[0])
 
+def direction_degress(start_point, end_point):
+    return direction(start_point,end_point) * (180/math.pi())
+
 # finds center point of a circle for the robot to drive around and the direction it should take
 def pivot_tuple(point_a, point_b, direction):
     #defining the circle

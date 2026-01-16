@@ -1,0 +1,3 @@
+apriltag
+cv2
+numpy

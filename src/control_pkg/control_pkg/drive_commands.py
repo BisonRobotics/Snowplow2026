@@ -55,18 +55,19 @@ class DriveToWaypointCommand(SequentialCommandGroup):
     """
     Command that drives the vehicle to the given waypoint
     """
-    def __init__(self, waypoint: Twist, get_position: Callable[[], Twist], get_pivot_position: Callable[[], float], drive_pivot: Callable[[int], None], drive: Callable[[float], None]):
+    def __init__(self, waypoint: Twist, get_position: Callable[[], Twist], get_pivot_position: Callable[[], float], drive_pivot: Callable[[int], None], drive: Callable[[float], None] , logging):
         super().__init__()
         self.waypoint = waypoint
         self.get_position = get_position
         self.get_pivot_position = get_pivot_position
         self.drive_pivot = drive_pivot
         self.drive = drive
+        self.logging = logging 
         
     def initialize(self):
         my_position = self.get_position()
         path = turn_path(start_point=(my_position.linear.x, my_position.linear.z), start_direction=my_position.angular.y, end_point=(self.waypoint.linear.x, self.waypoint.linear.z), end_direction=self.waypoint.angular.y)
-    
+        self.logging.info(f"waypoint x: {self.waypoint.linear.x}, z: {self.waypoint.linear.z}, y: {self.waypoint.angular.y}, position {self.get_position()}, pivot_position {self.get_pivot_position()}")
         path_segment_1 = SequentialCommandGroup()
         path_segment_1.add_commands(
             TurnToDegreesCommand(path[0] * 18.624, self.get_pivot_position, self.drive_pivot),
@@ -103,3 +104,52 @@ class DriveToWaypointCommand(SequentialCommandGroup):
             
         if len(self.commands) > 0:
             self.commands[0].initialize()
+
+class DriveBackwardsToWaypointCommand(DriveToWaypointCommand):
+    """
+    Command that drives the vehicle to the given waypoint backwards
+    """
+    def __init__(self, waypoint: Twist, get_position: Callable[[], Twist], get_pivot_position: Callable[[], float], drive_pivot: Callable[[int], None], drive: Callable[[float], None], logging):
+        super().__init__(waypoint, get_position, get_pivot_position, drive_pivot, drive, logging)
+
+    def initialize(self):
+        my_position = self.get_position()
+        path = turn_path(start_point=(my_position.linear.x, my_position.linear.z), start_direction=(my_position.angular.y + 180) % 360, end_point=(self.waypoint.linear.x, self.waypoint.linear.z), end_direction=(self.waypoint.angular.y + 180) % 360)
+    
+        path_segment_1 = SequentialCommandGroup()
+        path_segment_1.add_commands(
+            TurnToDegreesCommand(path[0] * 18.624, self.get_pivot_position, self.drive_pivot),
+            WaitCommand(2),
+            DriveDistanceCommand(-top_speed * path[1], path[2], self.drive)
+        )
+        
+        path_segment_2 = SequentialCommandGroup()
+        path_segment_2.add_commands(
+            TurnToDegreesCommand(path[3] * 18.624, self.get_pivot_position, self.drive_pivot),
+            WaitCommand(2),
+            DriveDistanceCommand(-top_speed * path[4], path[5], self.drive)
+        )
+        
+        path_segment_3 = SequentialCommandGroup()
+        path_segment_3.add_commands(
+            TurnToDegreesCommand(path[6] * 18.624, self.get_pivot_position, self.drive_pivot),
+            WaitCommand(2),
+            DriveDistanceCommand(-top_speed * path[7], path[8], self.drive)
+        )
+        
+        needed_segments: list[SequentialCommandGroup] = []
+        if path[2] > 0.2:
+            needed_segments.append(path_segment_1)
+        if path[5] > 0.2:
+            needed_segments.append(path_segment_2)
+        if path[8] > 0.2:
+            needed_segments.append(path_segment_3)
+            
+        for i in range(len(needed_segments)):
+            if i != len(needed_segments) - 1:
+                needed_segments[i].add_command(WaitCommand(2))
+            self.add_command(needed_segments[i])
+            
+        if len(self.commands) > 0:
+            self.commands[0].initialize()
+
