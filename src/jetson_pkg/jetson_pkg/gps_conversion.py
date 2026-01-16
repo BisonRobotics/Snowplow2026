@@ -17,12 +17,12 @@ class GpsConversion(Node):
         timer_period = 0.5
 
         #needs to be hardcodded to the real field when we practice
-        self.leftCornerLatitude = 44.973215
-        self.leftCornerLongitude = -93.291071
+        self.leftCornerLatitude = 44.973946#practice field at dunwoody
+        self.leftCornerLongitude = -93.289945#practice field at dunwoody
         #bottom left corner represents -8,0
         
-        self.rightCornerLatitude = 44.973072        
-        self.rightCornerLongitude = -93.291068
+        self.rightCornerLatitude = 44.973946 #practice field at dunwoody 
+        self.rightCornerLongitude = -93.289766 #practice field at dunwoody
         #bottom right corner represents 8,0
 
         self.unitX_variables()
