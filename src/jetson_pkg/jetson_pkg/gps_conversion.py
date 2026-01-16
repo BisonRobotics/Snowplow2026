@@ -10,7 +10,7 @@ import threading
 import cv2
 
 
-class gpsConversion(Node):
+class GpsConversion(Node):
     def __init__(self):
         super().__init__('gps_conversion')
         self.gps_conversion_publisher_ = self.create_publisher(Twist, '/gps_conversion', 10)
@@ -80,7 +80,7 @@ class gpsConversion(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    gps_conversion = gpsConversion()
+    gps_conversion = GpsConversion()
     rclpy.spin(gps_conversion)
     
     gps_conversion.destroy_node()

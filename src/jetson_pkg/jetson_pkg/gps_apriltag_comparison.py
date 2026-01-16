@@ -10,9 +10,9 @@ import threading
 import cv2
 
 #how off the coordinates can be from each other
-distanceError = 0.25 
+DISTANCE_ERROR = 0.25 
 
-class coordinateComparison(Node):
+class CoordinateComparison(Node):
     def __init__(self):
         super().__init__('coordinate_comparison_node')
         self.comparison_publisher_ = self.create_publisher(Twist, '/comparison', 10)
@@ -64,7 +64,7 @@ class coordinateComparison(Node):
 
 
     def is_coords_in_range(self, distance):
-        return distance <= distanceError
+        return distance <= DISTANCE_ERROR
     
     
     def coords_comparison(self):
@@ -90,7 +90,7 @@ class coordinateComparison(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    node = coordinateComparison()
+    node = CoordinateComparison()
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
