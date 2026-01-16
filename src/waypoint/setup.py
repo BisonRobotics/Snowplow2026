@@ -1,7 +1,6 @@
 from setuptools import find_packages, setup
-from glob import glob
 
-package_name = 'control_pkg'
+package_name = 'waypoint'
 
 setup(
     name=package_name,
@@ -11,20 +10,17 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        ('share/'+package_name,glob('launch*launch.[pxy][yaml]*'))
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='brandon',
-    maintainer_email='brandon@todo.todo',
+    maintainer='karsten',
+    maintainer_email='karsten.larson.1@gmail.com',
     description='TODO: Package description',
-    license='TODO: License declaration',
+    license='Apache-2.0',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'auto = control_pkg.auto:main',
-            'fqr = control_pkg.fqr:main',
-            'adv_path = control_pkg.advanced_path_planning:main'
+            'waypoint = waypoint.service:main'
         ],
     },
 )
