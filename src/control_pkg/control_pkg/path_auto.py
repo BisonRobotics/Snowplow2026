@@ -37,8 +37,17 @@ class PathAuto(Node):
             waypoint.angular.y = (i % 2) * 180.0
             self.get_logger().info(f"Waypoint {i}, X: {waypoint.linear.x}, Z: {waypoint.linear.z}, Y: {waypoint.angular.y}")
 
-        self.left_waypoint: Twist | None = None
-        self.right_waypoint: Twist | None = None
+        # Waypoint after left turn out
+        self.left_waypoint = Twist()
+        self.left_waypoint.linear.x = -2.5
+        self.left_waypoint.linear.z = 2
+        self.left_waypoint.angular.y = 180
+        
+        # Waypoint after right turn out
+        self.right_waypoint = Twist()
+        self.right_waypoint.linear.x = 2.5
+        self.right_waypoint.linear.z = 2
+        self.right_waypoint.angular.y = 0
 
         self.left_swoop = True
         self.right_swoop = True
@@ -105,6 +114,28 @@ class PathAuto(Node):
         else:
             self.right_waypoint = self.waypoint_array[internal_cone - 1]
             self.right_swoop = False
+
+    def drive_to_waypoint(self, start: tuple[float, float], start_direction: Literal[-1, 1], end: tuple[float, float], end_direction: Literal[-1, 1]):
+        self.get_logger().info('generating path')
+        path = turn_path(start_point=(start[0], start[1]), start_direction=start_direction, end_point=(end[0], end[1]), end_direction=end_direction)
+        
+        for index, segment in enumerate([path.segment1, path.segment2, path.segment3], start=1):
+            self.get_logger().info(f'running {index} segment of the path')
+            if segment.distance < 0.2:
+                continue
+
+            self.turn_to_degrees(segment.turn_angle * MAX_TURN_ANGLE)
+
+            self.get_logger().info('waiting for 2 seconds')
+            self.wait_time(2)
+
+            self.get_logger().info('running first segment of the path')
+            self.drive_distance(segment.direction, segment.distance)
+
+            self.get_logger().info('waiting for 2 seconds')
+            self.wait_time(2)
+
+        self.state += 1
 
     def determine_control(self):
         if not self.pivot_updated or not self.position_updated or not self.obstacles_updated:
@@ -267,7 +298,7 @@ class PathAuto(Node):
                 self.wait_time(2)
                 return
             case 34:
-                self.get_logger().info('turning to -MAX_TURN_ANGLE degrees')
+                self.get_logger().info(f'turning to -{MAX_TURN_ANGLE} degrees')
                 self.turn_to_degrees(-MAX_TURN_ANGLE)
                 return
             case 35:
@@ -372,7 +403,7 @@ class PathAuto(Node):
             case 57:
                 self.get_logger().info('driving at 100% speed for 2 meters')
                 if self.right_swoop:
-                    self.drive_distance(1, 2)
+                    self.drive_distance(1, 1.8)
                 else:
                     self.state += 11
                 return
@@ -421,7 +452,7 @@ class PathAuto(Node):
                 self.wait_time(2)
                 return
             case 69:
-                self.get_logger().info('turning to MAX_TURN_ANGLE degrees')
+                self.get_logger().info(f'turning to {MAX_TURN_ANGLE} degrees')
                 self.turn_to_degrees(MAX_TURN_ANGLE)
                 return
             case 70:
@@ -446,7 +477,7 @@ class PathAuto(Node):
                 return
             case 75:
                 self.get_logger().info('driving at -100% speed for 2 meters')
-                self.drive_distance(-1.0, 1.5)
+                self.drive_distance(-1, 1.5)
                 return
             case _:
                 self.get_logger().info('done')

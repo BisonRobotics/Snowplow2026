@@ -33,8 +33,8 @@ class DriveTimeCommand(Command):
 # measured in m/s
 top_speed = 1
 # measured in m/s/s
-acceleration = 3
-deceleration = 1
+acceleration = 0.5
+deceleration = 1 / 6
         
 class DriveDistanceCommand(DriveTimeCommand):
     """
