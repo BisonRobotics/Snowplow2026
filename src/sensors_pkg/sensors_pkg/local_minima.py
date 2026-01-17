@@ -1,6 +1,9 @@
 import numpy as np
 from scipy.signal import argrelmin
 
+def sorted_msg(scan_msg):
+    return np.array(sorted(scan_msg), key=lambda tup: tup[1])
+
 def find_minima(scan_msg):
     # tup is (dist, ang)
 
