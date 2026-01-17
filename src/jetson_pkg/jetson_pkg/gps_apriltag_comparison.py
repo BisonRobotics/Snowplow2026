@@ -72,8 +72,13 @@ class CoordinateComparison(Node):
         output_coords = Twist()
 
         if self.latest_apriltag_pose is None:
+            self.get_logger().info(f'Apriltags not detected, now using GPS')
             output_coords.linear.x = self.latest_gps_pose.linear.x
             output_coords.linear.z = self.latest_gps_pose.linear.z
+        elif self.latest_gps_pose is None:
+            self.get_logger().info(f'GPS not detected, now using Apriltags')
+            output_coords.linear.x = self.latest_apriltag_pose.linear.x
+            output_coords.linear.z = self.latest_apriltag_pose.linear.z
 
         elif self.is_coords_in_range(poseDifference):
             self.get_logger().info(f'Coords are in range. Distance from each other: {poseDifference: .2f}')
