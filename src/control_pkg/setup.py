@@ -23,6 +23,7 @@ setup(
     entry_points={
         'console_scripts': [
             'auto = control_pkg.auto:main',
+            'old_auto = control_pkg.path_auto:main',
             'fqr = control_pkg.fqr:main',
             'adv_path = control_pkg.advanced_path_planning:main'
         ],

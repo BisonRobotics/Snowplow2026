@@ -1,5 +1,5 @@
 
-def find_zone(x,y) -> int:
+def find_zone(x: float, y: float) -> int:
     # Zones are numbered Externally towards the inside with, .
     # Exterial Zones are numbered -1 to -7 clockwise starting from the garage. 
     # Returns 0 if Cone is outside of all zones.

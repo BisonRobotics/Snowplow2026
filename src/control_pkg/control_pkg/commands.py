@@ -1,3 +1,6 @@
+from __future__ import annotations
+from typing import Callable
+
 class Command:
     """
     The basic building block of the command-based framework
@@ -32,7 +35,7 @@ class Command:
         """
         pass
     
-    def along_with(self, other_command: 'Command') -> 'Command':
+    def along_with(self, other_command: Command) -> Command:
         """
         Runs another command at the same time as this command.
         The resulting command will be finished once this command and the other command
@@ -48,7 +51,7 @@ class Command:
         group.add_commands(self, other_command)
         return group
     
-    def and_then(self, next_command: 'Command') -> 'Command':
+    def and_then(self, next_command: Command) -> Command:
         """
         Runs another command after this command is finished. The resulting command
         will be finished once the next command is finished
@@ -62,7 +65,34 @@ class Command:
         group: SequentialCommandGroup = SequentialCommandGroup()
         group.add_commands(self, next_command)
         return group
-    
+
+class LazyCommand(Command):
+    """
+    A command that defers the creation of its underlying command until initialization.
+    This allows for dynamic parameters that are resolved at runtime.
+    """
+    def __init__(self, command_supplier: Callable[[], Command]):
+        super().__init__()
+        self.command_supplier = command_supplier
+        self.command: Command | None = None
+
+    def initialize(self) -> None:
+        self.command = self.command_supplier()
+        self.command.initialize()
+
+    def execute(self) -> None:
+        if self.command is not None:
+            self.command.execute()
+
+    def is_finished(self) -> bool:
+        if self.command is not None:
+            return self.command.is_finished()
+        return False
+
+    def end(self) -> None:
+        if self.command is not None:
+            self.command.end()
+
 class SequentialCommandGroup(Command):
     """
     Command group that runs commands one after another. It is finished once all sub-commands are finished
