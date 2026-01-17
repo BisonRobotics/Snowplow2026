@@ -71,6 +71,8 @@ class CoordinateComparison(Node):
 
         output_coords = Twist()
 
+        output_coords.angular.y = self.latest_apriltag_pose.angular.y
+
         if self.latest_apriltag_pose is None:
             self.get_logger().info(f'Apriltags not detected, now using GPS')
             output_coords.linear.x = self.latest_gps_pose.linear.x
