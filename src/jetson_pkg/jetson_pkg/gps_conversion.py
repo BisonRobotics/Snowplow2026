@@ -1,7 +1,7 @@
 import rclpy
 from rclpy.node import Node
 
-from geometry_msgs.msg import Twist, Vector3
+from geometry_msgs.msg import Twist
 from jetson_pkg.apriltag_interpretation import apriltag_interpretation
 
 import math
@@ -17,8 +17,8 @@ class GpsConversion(Node):
         timer_period = 0.5
 
         #needs to be hardcodded to the real field when we practice
-        self.leftCornerLatitude = 44.973946#practice field at dunwoody
-        self.leftCornerLongitude = -93.289945#practice field at dunwoody
+        self.leftCornerLatitude = 44.973946 #practice field at dunwoody
+        self.leftCornerLongitude = -93.289945 #practice field at dunwoody
         #bottom left corner represents -8,0
         
         self.rightCornerLatitude = 44.973946 #practice field at dunwoody 
@@ -31,17 +31,16 @@ class GpsConversion(Node):
 
         self.latest_gps_pose = None
 
-        #FIXME change to gps subscriber
         self.gps_subscriber = self.create_subscription(
-            Vector3,
-            '/gps_data',
+            Twist,
+            '/gps',
             self.gps_callback,
             10
         )
 
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
-    def gps_callback(self, msg: Vector3):
+    def gps_callback(self, msg: Twist):
         self.latest_gps_pose = msg
 
     def unitX_variables(self):
@@ -52,13 +51,17 @@ class GpsConversion(Node):
         #how much the longitude changes from one unit change of X
         self.UnitX_Long = (self.rightCornerLongitude - self.leftCornerLongitude) / 16    
 
-    def coords_distance(self):
+    def coords_distance(self, gps_coords: Twist):
         #compares latitude and longitude of robot to (0,0) 
-        self.deltaLatitude = self.latest_gps_pose.y - ((self.rightCornerLatitude + self.leftCornerLatitude) / 2)
-        self.deltaLongitude = self.latest_gps_pose.x - ((self.rightCornerLongitude + self.leftCornerLongitude) / 2)
+        self.deltaLatitude = gps_coords.linear.x - ((self.rightCornerLatitude + self.leftCornerLatitude) / 2)
+        self.deltaLongitude = gps_coords.linear.y - ((self.rightCornerLongitude + self.leftCornerLongitude) / 2)
 
     def timer_callback(self):
-        self.coords_distance()
+
+        if self.latest_gps_pose is None:
+            return
+        
+        self.coords_distance(self.latest_gps_pose)
 
         #converts our latitude and longitude change to our X and Y based off of our Units of X
         UnitX_Matrix = np.array(([self.UnitX_Lat, self.UnitX_Long],
