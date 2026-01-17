@@ -48,11 +48,11 @@ class CoordinateComparison(Node):
     #compares the apriltag and gps and checks if they are within the valid range 4
     def coords_distance(self, apriltag_coords: Twist, gps_coords: Twist):
         apriltagX = apriltag_coords.linear.x
-        apriltagY = apriltag_coords.linear.y
+        apriltagY = apriltag_coords.linear.z
 
         
         gpsX = gps_coords.linear.x - math.cos(apriltag_coords.angular.y) * 0.39
-        gpsY = gps_coords.linear.y - math.sin(apriltag_coords.angular.y) * 0.39
+        gpsY = gps_coords.linear.z - math.sin(apriltag_coords.angular.y) * 0.39
 
         #turns the x and y into a circle
         distance = math.sqrt((apriltagX - gpsX)**2 + (apriltagY - gpsY)**2)
@@ -73,17 +73,17 @@ class CoordinateComparison(Node):
 
         if self.latest_apriltag_pose is None:
             output_coords.linear.x = self.latest_gps_pose.linear.x
-            output_coords.linear.y = self.latest_gps_pose.linear.y
+            output_coords.linear.z = self.latest_gps_pose.linear.z
 
         elif self.is_coords_in_range(poseDifference):
             self.get_logger().info(f'Coords are in range. Distance from each other: {poseDifference: .2f}')
             output_coords.linear.x = (self.latest_gps_pose.linear.x + self.latest_apriltag_pose.linear.x)/2
-            output_coords.linear.y = (self.latest_gps_pose.linear.y + self.latest_apriltag_pose.linear.y)/2
+            output_coords.linear.z = (self.latest_gps_pose.linear.z + self.latest_apriltag_pose.linear.z)/2
 
         else:
             self.get_logger().info(f'Coords are out of range. they are {poseDifference: .2f}m. apart')
             output_coords.linear.x = self.latest_apriltag_pose.linear.x
-            output_coords.linear.y = self.latest_apriltag_pose.linear.y
+            output_coords.linear.z = self.latest_apriltag_pose.linear.z
 
         self.comparison_publisher_.publish(output_coords)
         

@@ -31,7 +31,7 @@ class Auto(Node):
         self.runner = Runner()
         self.create_timer(0.01, self.runner.run)
 
-        self.create_subscription(Twist, '/apriltag', self.update_position, 10)
+        self.create_subscription(Twist, '/comparison', self.update_position, 10)
         self.create_subscription(Float32, '/sensor/pivot', self.update_pivot_position, 10)
         self.create_subscription(Polygon, '/obstacle_locations', self.update_obstacles, 10)
                 

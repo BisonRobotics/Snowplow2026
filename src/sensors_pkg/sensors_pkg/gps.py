@@ -22,7 +22,7 @@ class GPSPublisher(Node):
                 
                 loc_msg = Twist()
                 loc_msg.linear.x = float(msg.latitude)
-                loc_msg.linear.y = float(msg.longitude)
+                loc_msg.linear.z = float(msg.longitude)
 
                 self.publisher_.publish(loc_msg)
                 self.get_logger().info(f'GPSublished Location {loc_msg}')
