@@ -194,15 +194,14 @@ def turn_path(start_point: tuple[float, float], start_direction: float, end_poin
                 distance3 = round(2 * turn_radius * math.pi - distance3 , 3)
                 direction_movement_end *= -1
     
-    segment1_turn_angle = (-1 if start_turn == TurnDirection.LEFT else 1) * 18.624
-    segment3_turn_angle = (-1 if end_turn == TurnDirection.LEFT else 1) * 18.624
+    segment1_turn_angle = (-1 if start_turn == TurnDirection.LEFT else 1)
+    segment3_turn_angle = (-1 if end_turn == TurnDirection.LEFT else 1)
 
-    # return Path(
-    #     segment1=Segment(segment1_turn_angle, direction_movement_start, distance1), 
-    #     segment2=Segment(0, 1, distance2), 
-    #     segment3=Segment(segment3_turn_angle, direction_movement_end, distance3)
-    # )
-    return (start_turn, direction_movement_start, distance1, 0, 1, distance2, end_turn, direction_movement_end, distance3)
+    return Path(
+        segment1=Segment(segment1_turn_angle, direction_movement_start, distance1), 
+        segment2=Segment(0, 1, distance2), 
+        segment3=Segment(segment3_turn_angle, direction_movement_end, distance3)
+    )
 
 if __name__ == "__main__":
     print(turn_path((0.14, -2.5), 90, (-2.5, 2), 180))

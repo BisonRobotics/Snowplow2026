@@ -63,25 +63,14 @@ class Auto(Node):
         garage_waypoint.linear.z = -1.2
         garage_waypoint.angular.y = 90
 
-        waypoint1 = Twist()
-        waypoint2 = Twist()
-        waypoint3 = Twist()
-        waypoint4 = Twist()
-        waypoint5 = Twist()
-        waypoint6 = Twist()
-        waypoint7 = Twist()
-        waypoint8 = Twist()
-
-        waypoint_array = [waypoint1, waypoint2, waypoint3, waypoint4, waypoint5, waypoint6, waypoint7, waypoint8]
-        i = 1
+        waypoint_array = [Twist() for _ in range(8)]
 
         # This for loop generates the waypoints for the squares in the course.
-        for waypoint in waypoint_array:
+        for i, waypoint in enumerate(waypoint_array, start=1):
             waypoint.linear.x = 2*(-(i%2)+0.5)*(5-((i+i%2)/2)) - ((-(i%2) + 0.5)*(2))
             waypoint.linear.z = 2
             waypoint.angular.y = (i % 2) * 180
             self.get_logger().info(f"Waypoint {i}, X: {waypoint.linear.x}, Z: {waypoint.linear.z}, Y: {waypoint.angular.y}")
-            i += 1
         
         # Factory functions for removing redundancy
         wait = lambda time_seconds : WaitCommand(time_seconds)
@@ -92,8 +81,8 @@ class Auto(Node):
         wait_until = lambda condition : WaitUntilCommand(condition)
 
         # Determining cone location
-        internal_cone: int | None = None  # Area the cone is located internally
-        external_cone: int | None = None  # Area the cone is located externally
+        internal_cone: int = 1  # Area the cone is located internally
+        external_cone: int = -3  # Area the cone is located externally
         
         for point in obsticals.points:
             x = point.x
@@ -115,13 +104,6 @@ class Auto(Node):
                 continue  
             
             external_cone = zone
-
-        if internal_cone == None: 
-            internal_cone = 1
-            self.get_logger().info("Interal Cone Defaulted to 1")
-        if external_cone == None :
-            external_cone = -3
-            self.get_logger().info("External Cone Defaulted to -3")
 
         self.get_logger().info(f"Cone Internal Zone: {internal_cone}, Cone External Zone: {external_cone}")
         
