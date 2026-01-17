@@ -20,8 +20,8 @@ class CoordinateComparison(Node):
 
         self.get_logger().info('Coordinate Comparison Node has started.')
     
-        self.latest_apriltag_pose = None
-        self.latest_gps_pose = None
+        self.latest_apriltag_pose: Twist | None = None
+        self.latest_gps_pose: Twist | None = None
 
         self.apriltag_subscriber = self.create_subscription(
             Twist,
@@ -54,10 +54,6 @@ class CoordinateComparison(Node):
         gpsX = gps_coords.linear.x - math.cos(apriltag_coords.angular.y) * 0.39
         gpsY = gps_coords.linear.y - math.sin(apriltag_coords.angular.y) * 0.39
 
-
-
-
-
         #turns the x and y into a circle
         distance = math.sqrt((apriltagX - gpsX)**2 + (apriltagY - gpsY)**2)
         return distance
@@ -75,7 +71,11 @@ class CoordinateComparison(Node):
 
         output_coords = Twist()
 
-        if self.is_coords_in_range(poseDifference):
+        if self.latest_apriltag_pose is None:
+            output_coords.linear.x = self.latest_gps_pose.linear.x
+            output_coords.linear.y = self.latest_gps_pose.linear.y
+
+        elif self.is_coords_in_range(poseDifference):
             self.get_logger().info(f'Coords are in range. Distance from each other: {poseDifference: .2f}')
             output_coords.linear.x = (self.latest_gps_pose.linear.x + self.latest_apriltag_pose.linear.x)/2
             output_coords.linear.y = (self.latest_gps_pose.linear.y + self.latest_apriltag_pose.linear.y)/2
