@@ -1,3 +1,4 @@
+from typing import Literal
 import rclpy
 import time
 
@@ -7,6 +8,8 @@ from geometry_msgs.msg import Point32, Polygon, Twist
 from rclpy.node import Node
 from std_msgs.msg import Float32, Int8
 from utilities.tools import Tools
+
+MAX_TURN_ANGLE = 18.624
 
 class PathAuto(Node):
     
@@ -29,9 +32,9 @@ class PathAuto(Node):
 
         # This for loop generates the waypoints for the squares in the course.
         for i, waypoint in enumerate(self.waypoint_array, start=1):
-            waypoint.linear.x = 2*(-(i%2)+0.5)*(5-((i+i%2)/2)) - ((-(i%2) + 0.5)*(2))
-            waypoint.linear.z = 2
-            waypoint.angular.y = (i % 2) * 180
+            waypoint.linear.x = 2.0*(-(i%2)+0.5)*(5-((i+i%2)/2)) - ((-(i%2) + 0.5)*(2))
+            waypoint.linear.z = 2.0
+            waypoint.angular.y = (i % 2) * 180.0
             self.get_logger().info(f"Waypoint {i}, X: {waypoint.linear.x}, Z: {waypoint.linear.z}, Y: {waypoint.angular.y}")
 
         self.left_waypoint: Twist | None = None
@@ -107,7 +110,10 @@ class PathAuto(Node):
         if not self.pivot_updated or not self.position_updated or not self.obstacles_updated:
             return
         
-        self.update_waypoints()
+        self.get_logger().info(f"State: {self.state}")
+
+        if self.state == 0:
+            self.update_waypoints()
 
         match self.state:
             case 0:
@@ -124,7 +130,7 @@ class PathAuto(Node):
                 return
             case 3:
                 self.get_logger().info('running first segment of the path')
-                self.drive_distance(1, 2.75)
+                self.drive_distance(-1, 2.75)
                 return
             case 4:
                 self.get_logger().info('waiting for 2 seconds')
@@ -148,7 +154,7 @@ class PathAuto(Node):
                 if self.path.segment1.distance < 0.2:
                     self.state += 3
                 else:
-                    self.turn_to_degrees(self.path.segment1.turn_angle * 18.624)
+                    self.turn_to_degrees(self.path.segment1.turn_angle * MAX_TURN_ANGLE)
                 return
             case 9:
                 self.get_logger().info('waiting for 2 seconds')
@@ -156,7 +162,7 @@ class PathAuto(Node):
                 return
             case 10:
                 self.get_logger().info('running first segment of the path')
-                self.drive_distance(self.path.segment1.direction * 1.0, self.path.segment1.distance)
+                self.drive_distance(self.path.segment1.direction, self.path.segment1.distance)
                 return
             case 11:
                 self.get_logger().info('waiting for 2 seconds')
@@ -167,7 +173,7 @@ class PathAuto(Node):
                 if self.path.segment2.distance < 0.2:
                     self.state += 3
                 else:
-                    self.turn_to_degrees(self.path.segment2.turn_angle * 18.624)
+                    self.turn_to_degrees(self.path.segment2.turn_angle * MAX_TURN_ANGLE)
                 return
             case 13:
                 self.get_logger().info('waiting for 2 seconds')
@@ -175,7 +181,7 @@ class PathAuto(Node):
                 return
             case 14:
                 self.get_logger().info('running second segment of the path')
-                self.drive_distance(self.path.segment2.direction * 1.0, self.path.segment2.distance)
+                self.drive_distance(self.path.segment2.direction, self.path.segment2.distance)
                 return
             case 15:
                 self.get_logger().info('waiting for 2 seconds')
@@ -186,7 +192,7 @@ class PathAuto(Node):
                 if self.path.segment3.distance < 0.2:
                     self.state += 3
                 else:
-                    self.turn_to_degrees(self.path.segment3.turn_angle * 18.624)
+                    self.turn_to_degrees(self.path.segment3.turn_angle * MAX_TURN_ANGLE)
                 return
             case 17:
                 self.get_logger().info('waiting for 2 seconds')
@@ -194,7 +200,7 @@ class PathAuto(Node):
                 return
             case 18:
                 self.get_logger().info('running the third segment of the path')
-                self.drive_distance(self.path.segment3.direction * 1.0, self.path.segment3.distance)
+                self.drive_distance(self.path.segment3.direction, self.path.segment3.distance)
                 return
             case 19:
                 self.get_logger().info('waiting for 2 seconds')
@@ -212,7 +218,7 @@ class PathAuto(Node):
             case 22:
                 self.get_logger().info('driving at 100% speed for 2 meters')
                 if self.left_swoop:
-                    self.drive_distance(1.0, 2)
+                    self.drive_distance(1, 2)
                 else:
                     self.state += 11
                 return
@@ -230,7 +236,7 @@ class PathAuto(Node):
                 return
             case 26:
                 self.get_logger().info('driving at 100% speed for 1/8th of a turn')
-                self.drive_distance(1.0, 3.14 * 1.90475 / 4)
+                self.drive_distance(1, 3.14 * 1.90475 / 4)
                 return
             case 27:
                 self.get_logger().info('waiting for 2 seconds')
@@ -238,7 +244,7 @@ class PathAuto(Node):
                 return
             case 28:
                 self.get_logger().info('driving at -100% speed for 1/8th of a turn')
-                self.drive_distance(-1.0, 3.14 * 1.90475 / 4)
+                self.drive_distance(-1, 3.14 * 1.90475 / 4)
                 return
             case 29:
                 self.get_logger().info('waiting for 2 seconds')
@@ -254,15 +260,15 @@ class PathAuto(Node):
                 return
             case 32:
                 self.get_logger().info('driving at -100% speed for 1.5 meters')
-                self.drive_distance(-1.0, 1.5)
+                self.drive_distance(-1, 1.5)
                 return
             case 33:
                 self.get_logger().info('waiting for 2 seconds')
                 self.wait_time(2)
                 return
             case 34:
-                self.get_logger().info('turning to -18.624 degrees')
-                self.turn_to_degrees(-18.624)
+                self.get_logger().info('turning to -MAX_TURN_ANGLE degrees')
+                self.turn_to_degrees(-MAX_TURN_ANGLE)
                 return
             case 35:
                 self.get_logger().info('waiting for 2 seconds')
@@ -270,7 +276,7 @@ class PathAuto(Node):
                 return
             case 36:
                 self.get_logger().info('driving at -100% speed for 90 degree turn')
-                self.drive_distance(-1.0, 2.25 * 3.14 / 2)
+                self.drive_distance(-1, 2.25 * 3.14 / 2)
                 return
             case 37:
                 self.get_logger().info('waiting for 2 seconds')
@@ -286,7 +292,7 @@ class PathAuto(Node):
                 return
             case 40:
                 self.get_logger().info('driving at -100% speed for 2 meters')
-                self.drive_distance(-1.0, 1.5)
+                self.drive_distance(-1, 1.5)
                 return
             case 41:
                 self.get_logger().info('waiting for 2 seconds')
@@ -302,7 +308,7 @@ class PathAuto(Node):
                 if self.path.segment1.distance < 0.2:
                     self.state += 3
                 else:
-                    self.turn_to_degrees(self.path.segment1.turn_angle * 18.624)
+                    self.turn_to_degrees(self.path.segment1.turn_angle * MAX_TURN_ANGLE)
                 return
             case 44:
                 self.get_logger().info('waiting for 2 seconds')
@@ -310,7 +316,7 @@ class PathAuto(Node):
                 return
             case 45:
                 self.get_logger().info('running first segment of the path')
-                self.drive_distance(self.path.segment1.direction * 1.0, self.path.segment1.distance)
+                self.drive_distance(self.path.segment1.direction, self.path.segment1.distance)
                 return
             case 46:
                 self.get_logger().info('waiting for 2 seconds')
@@ -321,7 +327,7 @@ class PathAuto(Node):
                 if self.path.segment2.distance < 0.2:
                     self.state += 3
                 else:
-                    self.turn_to_degrees(self.path.segment2.turn_angle * 18.624)
+                    self.turn_to_degrees(self.path.segment2.turn_angle * MAX_TURN_ANGLE)
                 return
             case 48:
                 self.get_logger().info('waiting for 2 seconds')
@@ -329,7 +335,7 @@ class PathAuto(Node):
                 return
             case 49:
                 self.get_logger().info('running second segment of the path')
-                self.drive_distance(self.path.segment2.direction * 1.0, self.path.segment2.distance)
+                self.drive_distance(self.path.segment2.direction, self.path.segment2.distance)
                 return
             case 50:
                 self.get_logger().info('waiting for 2 seconds')
@@ -340,7 +346,7 @@ class PathAuto(Node):
                 if self.path.segment3.distance < 0.2:
                     self.state += 3
                 else:
-                    self.turn_to_degrees(self.path.segment3.turn_angle * 18.624)
+                    self.turn_to_degrees(self.path.segment3.turn_angle * MAX_TURN_ANGLE)
                 return
             case 52:
                 self.get_logger().info('waiting for 2 seconds')
@@ -348,7 +354,7 @@ class PathAuto(Node):
                 return
             case 53:
                 self.get_logger().info('running the third segment of the path')
-                self.drive_distance(self.path.segment3.direction * 1.0, self.path.segment3.distance)
+                self.drive_distance(self.path.segment3.direction, self.path.segment3.distance)
                 return
             case 54:
                 self.get_logger().info('waiting for 2 seconds')
@@ -366,7 +372,7 @@ class PathAuto(Node):
             case 57:
                 self.get_logger().info('driving at 100% speed for 2 meters')
                 if self.right_swoop:
-                    self.drive_distance(1.0, 2)
+                    self.drive_distance(1, 2)
                 else:
                     self.state += 11
                 return
@@ -384,7 +390,7 @@ class PathAuto(Node):
                 return
             case 61:
                 self.get_logger().info('driving at 100% speed for 1/8th of a turn')
-                self.drive_distance(1.0, 3.14 * 1.90475 / 4)
+                self.drive_distance(1, 3.14 * 1.90475 / 4)
                 return
             case 62:
                 self.get_logger().info('waiting for 2 seconds')
@@ -392,7 +398,7 @@ class PathAuto(Node):
                 return
             case 63:
                 self.get_logger().info('driving at -100% speed for 1/8th of a turn')
-                self.drive_distance(-1.0, 3.14 * 1.90475 / 4)
+                self.drive_distance(-1, 3.14 * 1.90475 / 4)
                 return
             case 64:
                 self.get_logger().info('waiting for 2 seconds')
@@ -408,15 +414,15 @@ class PathAuto(Node):
                 return
             case 67:
                 self.get_logger().info('driving at -100% speed for 2.5 meters')
-                self.drive_distance(-1.0, 2.5)
+                self.drive_distance(-1, 2.5)
                 return
             case 68:
                 self.get_logger().info('waiting for 2 seconds')
                 self.wait_time(2)
                 return
             case 69:
-                self.get_logger().info('turning to 18.624 degrees')
-                self.turn_to_degrees(18.624)
+                self.get_logger().info('turning to MAX_TURN_ANGLE degrees')
+                self.turn_to_degrees(MAX_TURN_ANGLE)
                 return
             case 70:
                 self.get_logger().info('waiting for 2 seconds')
@@ -424,7 +430,7 @@ class PathAuto(Node):
                 return
             case 71:
                 self.get_logger().info('driving at -100% speed for 90 degree turn')
-                self.drive_distance(-1.0, 2.25 * 3.14 / 2)
+                self.drive_distance(-1, 2.25 * 3.14 / 2)
                 return
             case 72:
                 self.get_logger().info('waiting for 2 seconds')
@@ -446,7 +452,7 @@ class PathAuto(Node):
                 self.get_logger().info('done')
                 return
             
-    def turn_to_degrees(self, degrees):
+    def turn_to_degrees(self, degrees: float):
         msg = Int8()
         if abs(self.pivot_position - degrees) <= self.degree_deadband:
             self.state += 1
@@ -455,7 +461,7 @@ class PathAuto(Node):
             msg.data = 1 if self.pivot_position < degrees else -1
         self.pivot_publisher.publish(msg)
         
-    def drive_distance(self, speed, distance):
+    def drive_distance(self, speed: Literal[-1, 1], distance: float):
         run_time = 0
         if distance >= 2/3:
             run_time = (1/3) + distance - (2/3)
@@ -463,7 +469,7 @@ class PathAuto(Node):
             run_time = ((distance / (2/3)) ** 2) / 3
         self.drive_speed_time(speed, run_time)
     
-    def drive_speed_time(self, speed, run_time):
+    def drive_speed_time(self, speed: float, run_time: float):
         if not self.running:
             self.end_time = time.time() + run_time
             self.running = True
@@ -473,10 +479,10 @@ class PathAuto(Node):
             self.state += 1
             self.running = False
         else:
-            msg.linear.x = speed
+            msg.linear.x = float(speed)
         self.speed_publisher.publish(msg)
 
-    def wait_time(self, run_time):
+    def wait_time(self, run_time: float):
         if not self.running:
             self.end_time = time.time() + run_time
             self.running = True
