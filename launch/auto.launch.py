@@ -9,7 +9,7 @@ def generate_launch_description():
     #Auto control node
     start_auto_node = Node(
         package='control_pkg',
-        executable='auto',
+        executable='old_auto',
         name='auto'
     )
     
