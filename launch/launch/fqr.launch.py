@@ -7,10 +7,10 @@ import os.path
 
 def generate_launch_description():
     #Auto control node
-    start_auto_node = Node(
+    start_fqr_node = Node(
         package='control_pkg',
-        executable='old_auto',
-        name='auto'
+        executable='fqr',
+        name='fqr'
     )
     
     #Axle manager for Hyflex node
@@ -28,35 +28,13 @@ def generate_launch_description():
         name='imu'
     )
 
-    #AprilTag detection node
-    start_apriltag_node = Node(
-        package='jetson_pkg',
-        executable='apriltag',
-        name='apriltag',
-        parameters=[
-            {'cap':'rtsp://admin:hyflex@192.168.1.131:80/cam/realmonitor?channel=1&subtype=0'},
-            {'fx':1071.1362274102335},
-            {'fy':1102.1406887400624},
-            {'cx':953.030188084331},
-            {'cy':468.0382502048589}
-        ]
-    )
-
-    #Location calculation node
-    start_location_calculate_node = Node(
-        package='axle_manager',
-        executable='location_calculate',
-        name='location_calculate'
-    )
+    
 
     #Declare launch description and populate
     ld = LaunchDescription()
 
     #declare launch actions
     ld.add_action(start_axle_manager_node)
-    ld.add_action(start_auto_node)
-    ld.add_action(start_apriltag_node)
-
-
+    ld.add_action(start_fqr_node)
 
     return ld

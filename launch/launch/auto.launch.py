@@ -42,13 +42,6 @@ def generate_launch_description():
         ]
     )
 
-    #Location calculation node
-    start_location_calculate_node = Node(
-        package='axle_manager',
-        executable='location_calculate',
-        name='location_calculate'
-    )
-
     #Declare launch description and populate
     ld = LaunchDescription()
 
@@ -56,7 +49,5 @@ def generate_launch_description():
     ld.add_action(start_axle_manager_node)
     ld.add_action(start_auto_node)
     ld.add_action(start_apriltag_node)
-
-
 
     return ld
