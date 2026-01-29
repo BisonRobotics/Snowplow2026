@@ -10,7 +10,9 @@ from control_pkg.drive_commands import DriveDistanceCommand, DriveToWaypointComm
 from control_pkg.wait_commands import WaitCommand, WaitUntilCommand
 from control_pkg.turn_command import TurnToDegreesCommand
 from control_pkg.cone_zone_detection import find_zone 
-
+"""
+We Ran Path_Auto for competition and not this file.
+"""
 class Auto(Node):
     def __init__(self):
         super().__init__('auto')
