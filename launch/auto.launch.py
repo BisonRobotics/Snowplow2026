@@ -41,9 +41,22 @@ def generate_launch_description():
             {'cy':468.0382502048589}
         ]
     )
+    
+    #location calculate node
+    start_location_node = Node(
+        package='control_pkg',
+        executable='location_calculate',
+        name='location_node'
+    )
+
+
+
 
     #Declare launch description and populate
     ld = LaunchDescription()
+
+    #declare launch actions
+    ld.add_action(start_location_node)
 
     #declare launch actions
     ld.add_action(start_axle_manager_node)
