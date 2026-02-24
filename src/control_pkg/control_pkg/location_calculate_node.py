@@ -1,7 +1,7 @@
 import rclpy 
 from rclpy.node import Node
 
-from .wheel_odometry_interpret import update_odometry
+from ...axle_manager.axle_manager.wheel_odometry_interpret import update_odometry
 from geometry_msgs.msg import Twist, Point
 from sensor_msgs.msg import Imu
 import math

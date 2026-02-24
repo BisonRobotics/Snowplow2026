@@ -26,6 +26,7 @@ setup(
             'old_auto = control_pkg.path_auto:main',
             'fqr = control_pkg.fqr:main',
             'adv_path = control_pkg.advanced_path_planning:main'
+            'location_calculate = control_pkg.location_calculate_node:main'
         ],
     },
 )
