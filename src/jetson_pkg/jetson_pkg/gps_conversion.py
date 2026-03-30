@@ -33,7 +33,7 @@ class GpsConversion(Node):
 
         self.gps_subscriber = self.create_subscription(
             Twist,
-            '/gps',
+            '/location_calculate',
             self.gps_callback,
             10
         )

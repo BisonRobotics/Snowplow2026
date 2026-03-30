@@ -32,7 +32,7 @@ class CoordinateComparison(Node):
 
         self.gps_subscriber = self.create_subscription(
             Twist,
-            '/gps_conversion',
+            '/location_calculate',
             self.gps_callback,
             10
         )
