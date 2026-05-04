@@ -4,17 +4,49 @@
 
 ## Getting Started
 
+### Install WSL
+
+Follow these instructions: https://learn.microsoft.com/en-us/windows/wsl/install
+
 ### Setup your ssh keys
 
 Follow these instructions: https://help.github.com/articles/connecting-to-github-with-ssh/
 
 ### Clone the repo
 
-There are certain scripts that assume that you have the Snowplow2025 repo installed in your home directory. It is recommended you don't try to clone the repo anywhere else.
+There are certain scripts that assume that you have the Snowplow2026 repo installed in your home directory. It is recommended you don't try to clone the repo anywhere else.
 
 ```
 cd ~
-git clone git@github.com:BisonRobotics/Snowplow2025.git
+git clone git@github.com:BisonRobotics/Snowplow2026.git
+```
+
+### Install Ros 2 Iron
+```
+cd ~/Snowplow2026
+sudo bash rosinstall.sh
+```
+
+## Deploying and Running Code
+
+### Deploy to the computer
+Use winSCP to copy desired module to the computer. Open 192.168.1.1 in your browser while connected to the network to find the target IP.
+
+### Run Program
+SSH into the computer. Open 192.168.1.1 in your browser while connected to the network to find the target IP.
+```
+ssh br@x.x.x.x
+```
+
+In the ssh terminal
+```
+sudo su
+cd route/to/the/project
+colcon build
+source /opt/ros/iron/setup.bash 
+(and/or)
+source install/setup.bash
+ros2 launch launch/script_name.launch.py
 ```
 
 ## Development Conventions
