@@ -17,10 +17,10 @@ def generate_launch_description() -> LaunchDescription:
 
     #Axle manager for Hyflex node
     start_axle_manager_node = Node(
-        package='axle_manager',
-        executable='axle_manager',
-        name='axle_manager',
-        arguments=['--params-file '+os.path.join(get_package_share_directory('axle_manager'),'config','params.yaml')]
+        package='sdc2160_driver',
+        executable='sdc2160_driver',
+        name='sdc2160_driver',
+        arguments=['--params-file '+os.path.join(get_package_share_directory('sdc2160_driver'),'config','params.yaml')]
     )
 
     #VN100 Sensor IMU Node
